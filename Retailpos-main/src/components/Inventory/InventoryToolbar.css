@@ -1,0 +1,153 @@
+/* Sai Collection — premium inventory toolbar */
+.inventory-toolbar-card {
+  margin-bottom: 18px;
+  padding: 19px;
+  border: 1px solid #eee7db;
+  border-radius: 15px;
+  background: #fffefa;
+  box-shadow: 0 5px 18px rgba(63, 47, 22, .03);
+  font-family: "DM Sans", "Inter", sans-serif;
+}
+
+.inventory-toolbar-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 16px;
+}
+
+.inventory-toolbar-heading h3 {
+  margin: 0;
+  color: #3b3021;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.inventory-toolbar-heading p {
+  margin: 4px 0 0;
+  color: #9b9182;
+  font-size: 10px;
+}
+
+.inventory-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.inventory-search-wrap,
+.inventory-select-wrap {
+  min-height: 43px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 11px;
+  border: 1px solid #eee6d8;
+  border-radius: 10px;
+  background: #fffefa;
+  color: #a58b5d;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.inventory-search-wrap {
+  flex: 1 1 260px;
+  min-width: 220px;
+}
+
+.inventory-search-wrap:focus-within,
+.inventory-select-wrap:focus-within {
+  border-color: #bd8b2d;
+  box-shadow: 0 0 0 3px rgba(189, 139, 45, .09);
+}
+
+.inventory-search-wrap svg,
+.inventory-select-wrap svg {
+  flex: 0 0 auto;
+  font-size: 17px;
+}
+
+.search-input,
+.toolbar-select {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #514331;
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.search-input::placeholder { color: #a79d8e; opacity: 1; }
+.search-input::-webkit-search-cancel-button { cursor: pointer; }
+
+.inventory-select-wrap { flex: 0 1 160px; }
+.toolbar-select { cursor: pointer; min-height: 41px; }
+.inventory-select-wrap:has(select[aria-label="Filter by subcategory"]) { flex-basis: 175px; }
+
+.toolbar-actions { display: flex; gap: 9px; }
+
+.refresh-btn,
+.add-product-btn {
+  min-height: 43px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 15px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+.refresh-btn {
+  border: 1px solid #e6dcc9;
+  background: #fffefa;
+  color: #746956;
+}
+.refresh-btn svg { font-size: 17px; }
+.refresh-btn:hover { background: #faf6ed; border-color: #d9c69e; transform: translateY(-1px); }
+
+.add-product-btn {
+  border: 0;
+  color: #fff;
+  background: linear-gradient(135deg, #bd8b2d, #9e7021);
+  box-shadow: 0 5px 13px rgba(157, 112, 33, .18);
+  white-space: nowrap;
+}
+.add-product-btn svg { font-size: 18px; }
+.add-product-btn:hover { background: linear-gradient(135deg, #a97925, #875d18); transform: translateY(-1px); }
+
+@media (max-width: 900px) {
+  .inventory-toolbar { align-items: stretch; flex-direction: column; }
+  .toolbar-left { width: 100%; }
+  .inventory-search-wrap { flex-basis: 100%; }
+  .toolbar-actions { justify-content: flex-end; }
+}
+
+@media (max-width: 560px) {
+  .inventory-toolbar-card { padding: 14px; border-radius: 13px; }
+  .inventory-toolbar-heading { align-items: flex-start; }
+  .inventory-toolbar-heading p { max-width: 220px; line-height: 1.5; }
+  .inventory-toolbar-heading .add-product-btn { min-height: 38px; padding: 0 10px; font-size: 10px; }
+  .toolbar-left { gap: 8px; }
+  .inventory-select-wrap { flex: 1 1 calc(50% - 4px); }
+  .inventory-select-wrap:has(select[aria-label="Filter by subcategory"]) { flex-basis: calc(50% - 4px); }
+  .toolbar-actions { width: 100%; }
+  .refresh-btn { width: 100%; }
+}

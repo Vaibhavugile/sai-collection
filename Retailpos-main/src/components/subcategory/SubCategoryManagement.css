@@ -1,0 +1,158 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap");
+
+.sai-subcategory-stat,
+.sai-subcategory-toolbar,
+.sai-subcategory-table-wrap,
+.sai-subcategory-drawer {
+  font-family: "DM Sans", sans-serif !important;
+}
+
+.sai-subcategory-stat {
+  min-height: 142px;
+  height: 100%;
+  padding: 17px 18px;
+  border: 1px solid #eee7db !important;
+  border-radius: 15px !important;
+  background: #fffefa !important;
+  box-shadow: 0 5px 18px rgba(63,47,22,.035) !important;
+  transition: box-shadow .2s ease, border-color .2s ease;
+}
+.sai-subcategory-stat:hover {
+  border-color: #dfcfad !important;
+  box-shadow: 0 10px 25px rgba(89,65,25,.07) !important;
+}
+.sai-subcategory-stat-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.sai-subcategory-stat-label { color:#8d8374 !important; font-size:10px !important; font-weight:700 !important; }
+.sai-subcategory-stat-icon { width:34px; height:34px; display:grid; place-items:center; border-radius:10px; }
+.sai-subcategory-stat-icon svg { font-size:18px; }
+.sai-subcategory-stat.gold .sai-subcategory-stat-icon { color:#a47726; background:#f7f0e2; }
+.sai-subcategory-stat.green .sai-subcategory-stat-icon { color:#438263; background:#edf5ef; }
+.sai-subcategory-stat.rose .sai-subcategory-stat-icon { color:#b66d68; background:#fbefed; }
+.sai-subcategory-stat.sand .sai-subcategory-stat-icon { color:#9a7950; background:#f5f0e8; }
+.sai-subcategory-stat-value { margin-top:12px !important; color:#352b1e !important; font-size:27px !important; line-height:1.05 !important; font-weight:800 !important; letter-spacing:-.8px !important; }
+.sai-subcategory-stat-subtitle { margin-top:5px !important; color:#a1988b !important; font-size:9px !important; }
+
+.sai-subcategory-toolbar {
+  margin-bottom:18px;
+  padding:19px !important;
+  border:1px solid #eee7db !important;
+  border-radius:15px !important;
+  background:#fffefa !important;
+  box-shadow:0 5px 18px rgba(63,47,22,.03) !important;
+}
+.sai-subcategory-toolbar-top { display:flex; justify-content:space-between; align-items:center; gap:15px; margin-bottom:16px; }
+.sai-subcategory-toolbar-title { color:#3b3021 !important; font-size:14px !important; font-weight:800 !important; }
+.sai-subcategory-toolbar-caption { margin-top:4px !important; color:#9b9182 !important; font-size:10px !important; }
+.sai-subcategory-add-button {
+  min-height:42px !important;
+  padding:0 17px !important;
+  border-radius:10px !important;
+  color:#fff !important;
+  background:linear-gradient(135deg,#bd8b2d,#9e7021) !important;
+  box-shadow:0 5px 13px rgba(157,112,33,.18) !important;
+  font-family:"DM Sans",sans-serif !important;
+  font-size:11px !important;
+  font-weight:700 !important;
+  text-transform:none !important;
+  white-space:nowrap;
+}
+.sai-subcategory-add-button:hover { background:linear-gradient(135deg,#a97925,#875d18) !important; }
+.sai-subcategory-toolbar-controls { display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+.sai-subcategory-toolbar-controls .MuiInputAdornment-root { color:#a58b5d; }
+.sai-subcategory-toolbar-controls .MuiInputAdornment-root svg { font-size:17px; }
+.sai-subcategory-toolbar-controls .MuiSelect-select { font-size:11px; }
+.sai-subcategory-toolbar-foot { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; padding-top:13px; margin-top:14px; border-top:1px solid #f1ebdf; }
+.sai-subcategory-toolbar-foot p { color:#a1988b; font-size:9px; }
+.sai-subcategory-toolbar-foot .sai-subcategory-toolbar-brand { color:#a17a35; font-weight:800; letter-spacing:1px; }
+
+.sai-subcategory-table-wrap {
+  border:1px solid #eee7db !important;
+  border-radius:15px !important;
+  background:#fffefa !important;
+  box-shadow:0 5px 18px rgba(63,47,22,.03) !important;
+  overflow:auto !important;
+  max-height:68vh;
+}
+.sai-subcategory-table-wrap .MuiTableCell-root { border-bottom:1px solid #f1ece3; }
+.sai-subcategory-table-wrap thead .MuiTableCell-root {
+  padding:14px 16px;
+  color:#9a8f7e;
+  background:#fcfaf5;
+  font-family:"DM Sans",sans-serif;
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:1.15px;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.sai-subcategory-table-wrap tbody .MuiTableCell-root { padding:12px 16px; }
+.sai-subcategory-table-wrap tbody tr:last-child td { border-bottom:0; }
+.sai-subcategory-table-wrap tbody tr:hover { background:#fdfbf6; }
+.sai-subcategory-avatar { width:43px !important; height:43px !important; border-radius:10px !important; color:#9b762f !important; background:#f5efe3 !important; font-weight:800 !important; }
+.sai-subcategory-name { color:#403525 !important; font-size:11px !important; font-weight:800 !important; }
+.sai-subcategory-meta { margin-top:3px !important; color:#aaa092 !important; font-size:8px !important; }
+.sai-subcategory-description { max-width:300px; color:#82796d !important; font-size:10px !important; line-height:1.55 !important; }
+.sai-subcategory-parent-chip { max-width:190px; border-radius:7px !important; color:#92702f !important; background:#f7f1e5 !important; font-size:9px !important; font-weight:700 !important; }
+.sai-subcategory-parent-chip .MuiChip-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sai-subcategory-parent-chip .MuiChip-icon { margin-left:7px; color:#a17a35 !important; font-size:14px !important; }
+.sai-subcategory-count { height:27px !important; border-radius:7px !important; color:#92702f !important; background:#f7f1e5 !important; font-size:9px !important; font-weight:700 !important; }
+.sai-subcategory-count .MuiChip-icon { margin-left:7px; color:#a17a35 !important; font-size:14px !important; }
+.sai-subcategory-status { min-width:65px; height:25px !important; border-radius:7px !important; font-size:9px !important; font-weight:800 !important; }
+.sai-subcategory-status.is-active { color:#397454 !important; background:#edf5ef !important; }
+.sai-subcategory-status.is-inactive { color:#a85e58 !important; background:#faefed !important; }
+.sai-subcategory-action { width:30px !important; height:30px !important; border-radius:8px !important; }
+.sai-subcategory-action svg { font-size:16px; }
+.sai-subcategory-action.view { color:#8c7c61 !important; background:#f7f4ed !important; }
+.sai-subcategory-action.edit { color:#9b762f !important; background:#f7f0e2 !important; }
+.sai-subcategory-action.delete { color:#b36b64 !important; background:#faefed !important; }
+.sai-subcategory-action:hover { filter:brightness(.96); transform:translateY(-1px); }
+.sai-subcategory-empty { min-height:230px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:28px; }
+.sai-subcategory-empty-icon { width:53px; height:53px; display:grid; place-items:center; border-radius:15px; color:#a17a35; background:#f7f0e2; }
+.sai-subcategory-empty-icon svg { font-size:25px; }
+.sai-subcategory-empty-title { margin-top:13px !important; color:#403525 !important; font-size:15px !important; font-weight:800 !important; }
+.sai-subcategory-empty-copy { max-width:330px; margin-top:5px !important; color:#9b9182 !important; font-size:10px !important; line-height:1.6 !important; }
+
+.sai-subcategory-drawer { height:100%; display:flex; flex-direction:column; color:#403525; }
+.sai-subcategory-drawer-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:24px; }
+.sai-subcategory-eyebrow { color:#a17a35 !important; font-size:9px !important; font-weight:800 !important; letter-spacing:1.4px !important; }
+.sai-subcategory-drawer-title { margin-top:6px !important; color:#3b3021 !important; font-size:23px !important; font-weight:800 !important; letter-spacing:-.5px !important; }
+.sai-subcategory-drawer-subtitle { margin-top:4px !important; color:#9b9182 !important; font-size:11px !important; }
+.sai-subcategory-drawer-body { flex:1; overflow:auto; padding:23px 24px; }
+.sai-subcategory-field-label { margin-bottom:8px !important; color:#9a8f7e !important; font-size:9px !important; font-weight:800 !important; letter-spacing:1px !important; }
+.sai-subcategory-image-upload { position:relative; display:block; height:190px; overflow:hidden; border:1px dashed #d9c9a8; border-radius:14px; background:#faf6ed; cursor:pointer; }
+.sai-subcategory-image-upload img { width:100%; height:100%; object-fit:cover; display:block; }
+.sai-subcategory-image-placeholder { height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:#a17a35; }
+.sai-subcategory-image-placeholder svg { font-size:32px; }
+.sai-subcategory-image-placeholder strong { color:#6b5838; font-size:11px; }
+.sai-subcategory-image-placeholder span { color:#a69a87; font-size:9px; }
+.sai-subcategory-image-change { position:absolute; right:10px; bottom:10px; padding:7px 11px; border-radius:7px; color:#fff; background:rgba(35,30,24,.82); font-size:10px; font-weight:700; }
+.sai-subcategory-file-name { margin-top:7px !important; color:#8c7549 !important; font-size:10px !important; }
+.sai-subcategory-character-count { margin-top:6px !important; text-align:right; color:#a1988b !important; font-size:10px !important; }
+.sai-subcategory-status-row { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px; border:1px solid #eee7db; border-radius:12px; background:#fffdf8; }
+.sai-subcategory-status-title { color:#403525 !important; font-size:12px !important; font-weight:800 !important; }
+.sai-subcategory-status-caption { margin-top:4px !important; color:#9b9182 !important; font-size:10px !important; }
+.sai-subcategory-drawer-footer { display:flex; gap:10px; padding:18px 24px; background:#fffefa; }
+.sai-subcategory-drawer-footer .MuiButton-root { min-height:44px; border-radius:10px; font-size:11px; font-weight:800; text-transform:none; }
+.sai-subcategory-drawer-footer .MuiButton-outlined { color:#806b4b; border-color:#e6dcc9; }
+.sai-subcategory-drawer-footer .MuiButton-contained { color:#fff; }
+
+@media(max-width:700px) {
+  .sai-subcategory-stat { min-height:125px; padding:13px; border-radius:12px !important; }
+  .sai-subcategory-stat-label { max-width:95px; font-size:9px !important; }
+  .sai-subcategory-stat-icon { width:29px; height:29px; border-radius:8px; }
+  .sai-subcategory-stat-icon svg { font-size:16px; }
+  .sai-subcategory-stat-value { margin-top:10px !important; font-size:23px !important; }
+  .sai-subcategory-toolbar { padding:14px !important; border-radius:13px !important; }
+  .sai-subcategory-toolbar-top { align-items:flex-start; }
+  .sai-subcategory-toolbar-caption { max-width:220px; line-height:1.5 !important; }
+  .sai-subcategory-add-button { min-height:38px !important; padding:0 11px !important; font-size:10px !important; }
+  .sai-subcategory-toolbar-controls { gap:8px; }
+  .sai-subcategory-toolbar-controls > .MuiTextField-root:first-child { flex-basis:100% !important; }
+  .sai-subcategory-table-wrap { max-height:none; border-radius:12px !important; }
+  .sai-subcategory-drawer-header { padding:20px; }
+  .sai-subcategory-drawer-body { padding:18px 20px; }
+  .sai-subcategory-drawer-footer { padding:16px 20px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .sai-subcategory-stat, .sai-subcategory-action { transition:none !important; }
+}

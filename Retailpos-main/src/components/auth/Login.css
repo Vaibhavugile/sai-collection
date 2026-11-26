@@ -1,0 +1,161 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap");
+
+:root {
+  --sai-ink: #29251f;
+  --sai-muted: #81796e;
+  --sai-gold: #c28a18;
+  --sai-gold-dark: #95640c;
+  --sai-gold-soft: #f7edda;
+  --sai-border: #eee6d8;
+  --sai-paper: #fffdf9;
+}
+
+html, body, #root { min-height: 100%; width: 100%; }
+body { margin: 0; overflow-x: hidden; background: #fbf8f1; }
+* { box-sizing: border-box; }
+
+.sai-auth-page {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 42px;
+  overflow: hidden;
+  color: var(--sai-ink);
+  font-family: "DM Sans", sans-serif;
+  background:
+    radial-gradient(circle at 8% 10%, rgba(221, 177, 91, .15), transparent 28%),
+    radial-gradient(circle at 92% 90%, rgba(198, 151, 69, .12), transparent 30%),
+    linear-gradient(135deg, #fffdf9 0%, #f8f3e9 52%, #fffdfa 100%);
+}
+.sai-auth-glow { position: absolute; border-radius: 50%; filter: blur(75px); pointer-events: none; opacity: .38; }
+.sai-auth-glow-one { width: 300px; height: 300px; top: -140px; left: -100px; background: #f2d99e; }
+.sai-auth-glow-two { width: 360px; height: 360px; bottom: -190px; right: -100px; background: #e9d5ae; }
+
+.sai-auth-shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, .94fr) minmax(460px, 1.06fr);
+  width: min(1160px, 100%);
+  min-height: 720px;
+  overflow: hidden;
+  border: 1px solid rgba(196, 158, 91, .22);
+  border-radius: 30px;
+  background: rgba(255,255,255,.91);
+  box-shadow: 0 30px 90px rgba(79, 59, 26, .12), 0 4px 18px rgba(79,59,26,.04);
+  animation: sai-rise .65s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes sai-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+.sai-brand-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 36px 48px 30px;
+  overflow: hidden;
+  color: #fff;
+  background:
+    radial-gradient(circle at 85% 15%, rgba(255,255,255,.19), transparent 27%),
+    linear-gradient(150deg, #9b6b16 0%, #bd8b2c 48%, #e0b85f 100%);
+}
+.sai-brand-panel::before, .sai-brand-panel::after {
+  content: ""; position: absolute; border: 1px solid rgba(255,255,255,.16); border-radius: 50%; pointer-events: none;
+}
+.sai-brand-panel::before { width: 440px; height: 440px; right: -245px; top: 110px; }
+.sai-brand-panel::after { width: 330px; height: 330px; left: -230px; bottom: -130px; }
+.sai-brand-topline { display: flex; align-items: center; gap: 12px; position: relative; z-index: 1; }
+.sai-brand-logo-small { width: 47px; height: 47px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,.7); }
+.sai-brand-name { color: #fff !important; font-size: 17px !important; font-weight: 800 !important; letter-spacing: .2px !important; }
+.sai-brand-location { color: rgba(255,255,255,.78) !important; font-size: 9px !important; font-weight: 700 !important; letter-spacing: 2px !important; margin-top: 2px !important; }
+.sai-brand-content { position: relative; z-index: 1; display: flex; flex: 1; flex-direction: column; justify-content: center; align-items: flex-start; padding: 28px 0 24px; }
+.sai-brand-logo-wrap { align-self: center; width: 174px; height: 174px; display: grid; place-items: center; padding: 8px; border-radius: 50%; background: rgba(255,255,255,.96); box-shadow: 0 18px 38px rgba(75,45,0,.18); margin-bottom: 32px; animation: sai-float 5s ease-in-out infinite; }
+.sai-brand-logo { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
+@keyframes sai-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+.sai-brand-kicker { color: rgba(255,255,255,.82) !important; font-size: 9px !important; font-weight: 800 !important; letter-spacing: 2.4px !important; margin-bottom: 12px !important; }
+.sai-brand-heading { color: #fff !important; font-family: "Playfair Display", serif !important; font-size: clamp(34px, 3.5vw, 46px) !important; font-weight: 600 !important; line-height: 1.15 !important; letter-spacing: -.7px !important; }
+.sai-brand-description { max-width: 390px; color: rgba(255,255,255,.86) !important; font-size: 13px !important; line-height: 1.8 !important; margin-top: 16px !important; }
+.sai-feature-list { display: grid; gap: 17px; margin-top: 30px; }
+.sai-feature-item { display: flex; align-items: center; gap: 12px; }
+.sai-feature-icon, .sai-feature-check { width: 36px; height: 36px; flex: 0 0 36px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.27); border-radius: 12px; background: rgba(255,255,255,.13); }
+.sai-feature-icon svg { font-size: 19px; }
+.sai-feature-check { font-weight: 800; font-size: 17px; }
+.sai-feature-title { color: #fff !important; font-size: 12px !important; font-weight: 700 !important; }
+.sai-feature-subtitle { color: rgba(255,255,255,.72) !important; font-size: 10px !important; margin-top: 3px !important; }
+.sai-brand-footnote { position: relative; z-index: 1; color: rgba(255,255,255,.7) !important; font-size: 8px !important; font-weight: 700 !important; letter-spacing: 1.6px !important; }
+
+.sai-form-panel { display: flex; flex-direction: column; justify-content: center; padding: 66px clamp(38px, 6vw, 78px) 28px; background: rgba(255,255,255,.96); }
+.sai-form-inner { width: 100%; max-width: 430px; margin: 0 auto; }
+.sai-form-heading { margin-bottom: 34px; }
+.sai-form-eyebrow { color: var(--sai-gold-dark) !important; font-size: 9px !important; font-weight: 800 !important; letter-spacing: 2px !important; }
+.sai-form-title { color: var(--sai-ink) !important; font-family: "Playfair Display", serif !important; font-size: clamp(31px, 3vw, 39px) !important; font-weight: 600 !important; line-height: 1.2 !important; letter-spacing: -.7px !important; }
+.sai-form-subtitle { color: var(--sai-muted) !important; font-size: 13px !important; line-height: 1.7 !important; }
+.sai-auth-form { width: 100%; }
+.sai-auth-alert { border-radius: 12px !important; font-size: 12px !important; margin-bottom: 17px !important; }
+.sai-input .MuiOutlinedInput-root { min-height: 57px; border-radius: 13px; background: #fffefa; transition: .2s ease; }
+.sai-input .MuiOutlinedInput-notchedOutline { border-color: #e9e1d4; }
+.sai-input .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline { border-color: #c99b43; }
+.sai-input .MuiOutlinedInput-root.Mui-focused { background: #fff; box-shadow: 0 0 0 4px rgba(194,138,24,.10); }
+.sai-input .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline { border: 1.5px solid var(--sai-gold); }
+.sai-input .MuiInputLabel-root { color: #8b8378; font-size: 13px; }
+.sai-input .MuiInputLabel-root.Mui-focused { color: var(--sai-gold-dark); }
+.sai-input .MuiInputBase-input { color: #302b24; font-family: "DM Sans", sans-serif; font-size: 13px; }
+.sai-input .MuiInputAdornment-root svg { color: #b18a48; font-size: 19px; }
+.sai-input .MuiIconButton-root { color: #877b68; }
+.sai-login-options { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 12px 0 20px; }
+.sai-login-options .MuiFormControlLabel-root, .sai-terms { margin-left: -8px; }
+.sai-login-options .MuiFormControlLabel-label, .sai-terms .MuiFormControlLabel-label { color: #71695e; font-size: 11px; }
+.sai-login-options .MuiCheckbox-root, .sai-terms .MuiCheckbox-root { color: #c7a45e; padding: 7px; }
+.sai-login-options .MuiCheckbox-root.Mui-checked, .sai-terms .MuiCheckbox-root.Mui-checked { color: var(--sai-gold-dark); }
+.sai-text-button { color: var(--sai-gold-dark) !important; text-transform: none !important; font-size: 11px !important; font-weight: 700 !important; min-width: auto !important; padding: 5px !important; }
+.sai-submit-button { height: 55px; border-radius: 13px !important; color: #fff !important; background: linear-gradient(110deg, #a87518, #d1a64f) !important; box-shadow: 0 12px 24px rgba(173,123,31,.22) !important; font-family: "DM Sans", sans-serif !important; font-size: 13px !important; font-weight: 800 !important; letter-spacing: .2px !important; text-transform: none !important; transition: transform .2s ease, box-shadow .2s ease !important; }
+.sai-submit-button:hover { transform: translateY(-2px); box-shadow: 0 16px 28px rgba(173,123,31,.29) !important; background: linear-gradient(110deg, #94630f, #c39436) !important; }
+.sai-submit-button:active { transform: scale(.99); }
+.sai-security-note { display: flex; align-items: flex-start; gap: 9px; margin-top: 24px; padding: 13px 14px; border: 1px solid #f0e7d7; border-radius: 12px; background: #fcf8ef; }
+.sai-security-note svg { flex: 0 0 auto; color: #b58a3a; font-size: 16px; margin-top: 1px; }
+.sai-security-note p { color: #837969; font-size: 10px; line-height: 1.6; }
+.sai-auth-footer { margin-top: 28px; padding-top: 22px; border-top: 1px solid #f0ebe2; }
+.sai-switch-auth { color: #82796e !important; font-size: 11px !important; text-align: center; }
+.sai-switch-auth a { display: inline-flex; align-items: center; gap: 3px; color: var(--sai-gold-dark); font-weight: 800; text-decoration: none; }
+.sai-switch-auth a:hover { text-decoration: underline; }
+.sai-switch-auth a svg { font-size: 14px; }
+.sai-form-bottom-note { color: #a69d90 !important; font-size: 9px !important; text-align: center; margin-top: 34px !important; }
+.sai-mobile-brand { display: none; }
+.sai-signup-form .sai-terms { margin-top: 12px; margin-bottom: 15px; }
+
+@media (max-width: 900px) {
+  .sai-auth-page { padding: 24px; }
+  .sai-auth-shell { grid-template-columns: minmax(0, .85fr) minmax(400px, 1.15fr); min-height: 670px; }
+  .sai-brand-panel { padding: 30px 30px 25px; }
+  .sai-brand-logo-wrap { width: 145px; height: 145px; margin-bottom: 25px; }
+  .sai-form-panel { padding: 48px 38px 24px; }
+}
+@media (max-width: 700px) {
+  .sai-auth-page { min-height: 100svh; align-items: flex-start; padding: 0; background: #fffdf9; }
+  .sai-auth-glow { display: none; }
+  .sai-auth-shell { display: block; width: 100%; min-height: 100svh; border: 0; border-radius: 0; box-shadow: none; background: #fffdf9; animation: none; }
+  .sai-brand-panel { display: none; }
+  .sai-form-panel { min-height: 100svh; justify-content: flex-start; padding: 28px 23px calc(24px + env(safe-area-inset-bottom)); }
+  .sai-mobile-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 42px; }
+  .sai-mobile-brand img { width: 58px; height: 58px; object-fit: contain; border-radius: 50%; border: 1px solid #f0dfbb; background: white; }
+  .sai-mobile-brand-name { color: #33291b !important; font-size: 17px !important; font-weight: 800 !important; }
+  .sai-mobile-brand-location { color: #a17a35 !important; font-size: 9px !important; font-weight: 800 !important; letter-spacing: 1.7px !important; margin-top: 3px !important; }
+  .sai-form-inner { max-width: 480px; }
+  .sai-form-heading { margin-bottom: 28px; }
+  .sai-form-title { font-size: 32px !important; }
+  .sai-form-subtitle { font-size: 12px !important; }
+  .sai-input .MuiOutlinedInput-root { min-height: 55px; }
+  .sai-submit-button { height: 54px; }
+  .sai-form-bottom-note { margin-top: auto !important; padding-top: 35px; }
+}
+@media (max-width: 380px) {
+  .sai-form-panel { padding-left: 18px; padding-right: 18px; }
+  .sai-mobile-brand { margin-bottom: 34px; }
+  .sai-form-title { font-size: 29px !important; }
+  .sai-login-options .MuiFormControlLabel-label, .sai-text-button { font-size: 10px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}

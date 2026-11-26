@@ -1,0 +1,257 @@
+
+/* ==========================================
+   SAI COLLECTION — INVENTORY DASHBOARD
+========================================== */
+
+.inventory-page {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
+  padding-bottom: 30px;
+  font-family: "DM Sans", "Inter", sans-serif;
+}
+
+/* ==========================================
+   PAGE HEADER
+========================================== */
+
+.inventory-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.inventory-page-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 9px;
+  color: #a17a35;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+}
+
+.inventory-page-eyebrow svg {
+  font-size: 17px;
+}
+
+.inventory-page-title {
+  color: #352b1e !important;
+  font-size: 34px !important;
+  line-height: 1.15 !important;
+  font-weight: 800 !important;
+  letter-spacing: -1.2px !important;
+}
+
+.inventory-page-subtitle {
+  margin-top: 8px !important;
+  color: #918779 !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+}
+
+.inventory-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.inventory-live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border: 1px solid #e8e9dc;
+  border-radius: 9px;
+  background: #fbfcf6;
+  color: #648064;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.inventory-live-indicator span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #62a477;
+  box-shadow: 0 0 0 4px rgba(98, 164, 119, .12);
+}
+
+/* ==========================================
+   INVENTORY SUMMARY
+========================================== */
+
+.inventory-summary {
+  position: relative;
+  min-height: 115px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+  padding: 19px 23px;
+  border: 1px solid #eee5d7;
+  border-radius: 15px;
+  background: linear-gradient(110deg, #fffefa 0%, #f8f2e7 100%);
+}
+
+.inventory-summary-label {
+  color: #9a8f7e !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  letter-spacing: 1.2px !important;
+}
+
+.inventory-summary-value {
+  margin-top: 5px !important;
+  color: #352b1e !important;
+  font-size: 29px !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+  letter-spacing: -1px !important;
+}
+
+.inventory-summary-caption {
+  margin-top: 5px !important;
+  color: #a1988b !important;
+  font-size: 10px !important;
+}
+
+.inventory-summary-decoration {
+  width: 61px;
+  height: 61px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #eadcc1;
+  border-radius: 17px;
+  background: rgba(255, 255, 255, .65);
+  color: #a17a35;
+}
+
+.inventory-summary-decoration svg {
+  font-size: 30px;
+}
+
+/* ==========================================
+   LOADING
+========================================== */
+
+.inventory-loading {
+  min-height: 145px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid #eee7db;
+  border-radius: 15px;
+  background: #fffefa;
+}
+
+.inventory-loading p {
+  color: #918779;
+  font-size: 11px;
+}
+
+.inventory-table-loading {
+  min-height: 260px;
+}
+
+/* ==========================================
+   RESULTS HEADING
+========================================== */
+
+.inventory-results-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.inventory-results-title {
+  color: #403525 !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+}
+
+.inventory-results-caption {
+  margin-top: 4px !important;
+  color: #9b9182 !important;
+  font-size: 10px !important;
+}
+
+.inventory-filter-count {
+  padding: 7px 11px;
+  border: 1px solid #eadcc1;
+  border-radius: 8px;
+  background: #f7f0e2;
+  color: #92702f;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 768px) {
+  .inventory-page {
+    gap: 16px;
+  }
+
+  .inventory-page-title {
+    font-size: 29px !important;
+  }
+
+  .inventory-summary {
+    min-height: 100px;
+    padding: 16px;
+  }
+
+  .inventory-summary-decoration {
+    width: 49px;
+    height: 49px;
+    border-radius: 13px;
+  }
+
+  .inventory-summary-decoration svg {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .inventory-page {
+    gap: 14px;
+  }
+
+  .inventory-page-header {
+    align-items: flex-start;
+  }
+
+  .inventory-page-title {
+    font-size: 26px !important;
+  }
+
+  .inventory-page-subtitle {
+    max-width: 290px;
+    font-size: 11px !important;
+  }
+
+  .inventory-summary {
+    min-height: 92px;
+    border-radius: 12px;
+  }
+
+  .inventory-summary-value {
+    font-size: 25px !important;
+  }
+
+  .inventory-live-indicator {
+    font-size: 9px;
+  }
+}

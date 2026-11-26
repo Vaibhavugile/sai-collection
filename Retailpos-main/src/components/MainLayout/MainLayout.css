@@ -1,0 +1,120 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap");
+
+.sai-layout,
+.sai-layout * {
+  box-sizing: border-box;
+}
+
+.sai-layout {
+  --sai-layout-sidebar-width: 264px;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  background:
+    radial-gradient(circle at 92% 0%, rgba(216, 183, 119, .09), transparent 24%),
+    #faf8f3;
+  color: #342d23;
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.sai-layout.sidebar-is-collapsed {
+  --sai-layout-sidebar-width: 82px;
+}
+
+.sai-main-content {
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  width: calc(100% - var(--sai-layout-sidebar-width));
+  margin-left: var(--sai-layout-sidebar-width);
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  transition:
+    margin-left .28s cubic-bezier(.2,.7,.2,1),
+    width .28s cubic-bezier(.2,.7,.2,1);
+}
+
+.sai-page-content {
+  width: 100%;
+  min-width: 0;
+  flex: 1 0 auto;
+  padding: clamp(19px, 2.5vw, 34px);
+  background: transparent;
+  animation: sai-page-enter .35s ease both;
+}
+
+.sai-page-content-inner {
+  width: 100%;
+  max-width: 1600px;
+  min-width: 0;
+  margin: 0 auto;
+}
+
+@keyframes sai-page-enter {
+  from { opacity: .72; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sai-layout-footer {
+  min-height: 43px;
+  padding: 10px clamp(19px, 2.5vw, 34px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid #eee8dd;
+  color: #a1988b;
+  background: rgba(255, 254, 250, .68);
+  font-size: 9px;
+  font-weight: 500;
+}
+
+/* Keep nested page containers from creating horizontal overflow. */
+.sai-page-content > *,
+.sai-page-content-inner > * {
+  min-width: 0;
+}
+
+@media (max-width: 992px) {
+  .sai-layout,
+  .sai-layout.sidebar-is-collapsed {
+    --sai-layout-sidebar-width: 0px;
+  }
+
+  .sai-main-content {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .sai-page-content {
+    padding: 22px 20px 28px;
+  }
+}
+
+@media (max-width: 600px) {
+  .sai-page-content {
+    padding: 16px 12px 22px;
+  }
+
+  .sai-layout-footer {
+    min-height: 38px;
+    padding: 9px 13px;
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .sai-layout-footer span:last-child {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sai-main-content,
+  .sai-page-content,
+  .sai-layout-footer {
+    transition: none !important;
+    animation: none !important;
+  }
+}

@@ -1,0 +1,140 @@
+/* Sai Collection — premium inventory table */
+.inventory-table-card {
+  overflow: hidden;
+  border: 1px solid #eee7db;
+  border-radius: 15px;
+  background: #fffefa;
+  box-shadow: 0 5px 18px rgba(63, 47, 22, .03);
+  font-family: "DM Sans", "Inter", sans-serif;
+}
+
+.inventory-table-scroll { width: 100%; overflow: auto; }
+
+.inventory-table {
+  width: 100%;
+  min-width: 990px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.inventory-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 14px 15px;
+  background: #fcfaf5;
+  color: #9a8f7e;
+  border-bottom: 1px solid #eee7db;
+  text-align: left;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.inventory-table td {
+  padding: 12px 15px;
+  color: #716757;
+  border-bottom: 1px solid #f1ece3;
+  font-size: 10px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.inventory-table tbody tr { transition: background .18s ease; }
+.inventory-table tbody tr:hover { background: #fdfbf6; }
+.inventory-table tbody tr:last-child td { border-bottom: 0; }
+
+.inventory-product-cell { display: flex; align-items: center; gap: 11px; min-width: 200px; }
+.product-thumb {
+  width: 43px;
+  height: 43px;
+  flex: 0 0 43px;
+  display: block;
+  object-fit: cover;
+  border: 1px solid #eee7db;
+  border-radius: 10px;
+  background: #f7f2e9;
+}
+.product-thumb-placeholder { display: grid; place-items: center; color: #a17a35; }
+.product-thumb-placeholder svg { font-size: 20px; }
+.inventory-product-info { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.inventory-product-info strong { max-width: 220px; overflow: hidden; color: #403525; font-size: 10px; font-weight: 800; text-overflow: ellipsis; }
+.inventory-product-info span { color: #aaa092; font-size: 8px; }
+.inventory-code { color: #88785e; font-size: 9px; font-weight: 700; }
+
+.inventory-stock { display: inline-flex; min-width: 30px; justify-content: center; color: #5e725e; font-weight: 800; }
+.inventory-stock.low { color: #a87928; }
+.inventory-stock.out { color: #b36b64; }
+.inventory-price { color: #6e542b !important; font-weight: 800; }
+
+.inventory-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  padding: 5px 9px;
+  border-radius: 7px;
+  font-size: 8px;
+  font-weight: 800;
+}
+.inventory-status.active { color: #397454; background: #edf5ef; }
+.inventory-status.inactive { color: #a85e58; background: #faefed; }
+
+.inventory-actions-heading { text-align: right !important; }
+.inventory-row-actions { display: flex; justify-content: flex-end; gap: 5px; }
+.inventory-action {
+  width: 29px;
+  height: 29px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform .18s ease, filter .18s ease;
+}
+.inventory-action svg { font-size: 15px; }
+.inventory-action:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(.96); }
+.inventory-action:disabled { opacity: .38; cursor: not-allowed; }
+.inventory-action.view { color: #8c7c61; background: #f7f4ed; }
+.inventory-action.edit { color: #9b762f; background: #f7f0e2; }
+.inventory-action.delete { color: #b36b64; background: #faefed; }
+
+.inventory-table-footer {
+  padding: 11px 15px;
+  border-top: 1px solid #f1ece3;
+  color: #a1988b;
+  background: #fffefa;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.empty-state {
+  min-height: 250px;
+  padding: 45px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.empty-icon {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 14px;
+  border-radius: 16px;
+  color: #a17a35;
+  background: #f7f0e2;
+}
+.empty-icon svg { font-size: 28px; }
+.empty-state h3 { margin: 0; color: #403525; font-size: 15px; font-weight: 800; }
+.empty-state p { max-width: 330px; margin: 6px 0 0; color: #9b9182; font-size: 10px; line-height: 1.6; }
+
+@media (max-width: 600px) {
+  .inventory-table-card { border-radius: 12px; }
+  .inventory-table th, .inventory-table td { padding: 11px 12px; }
+}

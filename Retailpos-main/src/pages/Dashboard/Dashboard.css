@@ -1,0 +1,190 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap");
+
+:root {
+  --sai-ink: #30291f;
+  --sai-muted: #82796c;
+  --sai-gold: #bd8b2d;
+  --sai-gold-deep: #916314;
+  --sai-line: #eee7db;
+  --sai-surface: #fffefa;
+}
+.sai-dashboard, .sai-dashboard * { box-sizing: border-box; }
+.sai-dashboard {
+  min-height: 100vh;
+  padding: 28px clamp(18px, 3.4vw, 52px) 25px;
+  color: var(--sai-ink);
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 94% 4%, rgba(216, 183, 119, .12), transparent 25%),
+    #faf8f3;
+}
+.sai-dashboard button { font: inherit; }
+.sai-dashboard-topline {
+  max-width: 1500px; margin: 0 auto 26px; display: flex; align-items: center;
+  justify-content: space-between; gap: 18px;
+}
+.sai-dashboard-brand { display: flex; align-items: center; gap: 11px; }
+.sai-dashboard-brand img { width: 48px; height: 48px; object-fit: contain; border-radius: 50%; background: white; border: 1px solid #eee1c7; }
+.sai-dashboard-brand strong { display: block; font-size: 15px; font-weight: 800; letter-spacing: -.2px; }
+.sai-dashboard-brand span { display: block; margin-top: 4px; color: #a17c3a; font-size: 8px; font-weight: 800; letter-spacing: 1.8px; }
+.sai-dashboard-top-actions { display: flex; align-items: center; gap: 12px; }
+.sai-date-label { color: #8b8275; font-size: 11px; font-weight: 600; margin-right: 8px; }
+.sai-notification-button {
+  position: relative; width: 40px; height: 40px; display: grid; place-items: center;
+  border: 1px solid var(--sai-line); border-radius: 50%; color: #756b5d; background: #fff;
+  cursor: pointer; transition: .2s ease;
+}
+.sai-notification-button:hover { border-color: #c9a45f; color: var(--sai-gold-deep); transform: translateY(-1px); }
+.sai-notification-button svg { font-size: 20px; }
+.sai-notification-button i { position: absolute; width: 6px; height: 6px; top: 8px; right: 9px; border: 1px solid white; border-radius: 50%; background: #c58c27; }
+.sai-admin-chip { display: flex; align-items: center; gap: 9px; padding: 5px 10px 5px 5px; border: 1px solid var(--sai-line); border-radius: 30px; background: #fff; cursor: default; }
+.sai-admin-avatar { width: 31px; height: 31px; display: grid; place-items: center; border-radius: 50%; color: white; background: linear-gradient(145deg, #b7862d, #dfbd73); font-size: 12px; font-weight: 800; }
+.sai-admin-copy { display: flex; flex-direction: column; gap: 2px; text-align: left; }
+.sai-admin-copy strong { color: #3c3429; font-size: 10px; font-weight: 800; }
+.sai-admin-copy small { color: #948a7d; font-size: 9px; }
+.sai-admin-chevron { color: #968a78; font-size: 17px !important; }
+
+.sai-dashboard-hero {
+  position: relative; isolation: isolate; max-width: 1500px; min-height: 220px; margin: 0 auto 35px;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px; overflow: hidden;
+  padding: 34px clamp(25px, 4vw, 54px); border: 1px solid rgba(168, 122, 35, .2); border-radius: 21px;
+  color: #fff; background: linear-gradient(112deg, #8e621a 0%, #b98428 48%, #d2aa5d 100%);
+  box-shadow: 0 14px 35px rgba(112, 78, 20, .12);
+}
+.sai-dashboard-hero::before, .sai-dashboard-hero::after {
+  content: ""; position: absolute; z-index: -1; border: 1px solid rgba(255,255,255,.16); border-radius: 50%;
+}
+.sai-dashboard-hero::before { width: 380px; height: 380px; right: 10%; top: -260px; }
+.sai-dashboard-hero::after { width: 300px; height: 300px; right: -90px; bottom: -220px; }
+.sai-hero-copy { position: relative; z-index: 1; max-width: 660px; }
+.sai-hero-kicker { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,.76); font-size: 9px; font-weight: 800; letter-spacing: 2px; }
+.sai-hero-kicker span { width: 6px; height: 6px; border-radius: 50%; background: #f8e8c2; box-shadow: 0 0 0 4px rgba(255,255,255,.12); }
+.sai-hero-copy h1 { margin: 13px 0 8px; color: #fff; font-family: "Playfair Display", serif; font-size: clamp(29px, 3.4vw, 43px); line-height: 1.15; font-weight: 600; letter-spacing: -.6px; }
+.sai-hero-copy h1 em { color: #f9e8c4; font-style: normal; }
+.sai-hero-copy > p { max-width: 520px; margin: 0; color: rgba(255,255,255,.83); font-size: 12px; line-height: 1.7; }
+.sai-hero-location { display: flex; align-items: center; gap: 7px; margin-top: 20px; color: #fff7e8; font-size: 10px; font-weight: 700; }
+.sai-hero-location svg { font-size: 15px; }
+.sai-hero-location span { opacity: .6; }
+.sai-hero-emblem { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 9px; margin-right: 4%; }
+.sai-emblem-ring { width: 116px; height: 116px; padding: 6px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.52); border-radius: 50%; background: rgba(255,255,255,.13); box-shadow: 0 10px 30px rgba(69,43,5,.14); }
+.sai-emblem-ring img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
+.sai-hero-emblem > span { color: rgba(255,255,255,.78); font-size: 7px; font-weight: 800; letter-spacing: 1.4px; white-space: nowrap; }
+.sai-hero-decoration { position: absolute; z-index: -1; width: 230px; height: 230px; right: 25%; bottom: -190px; border: 1px solid rgba(255,255,255,.13); border-radius: 50%; }
+
+.sai-management-section, .sai-dashboard-content-grid, .sai-dashboard-bottom-grid, .sai-dashboard-footer { max-width: 1500px; margin-left: auto; margin-right: auto; }
+.sai-section-heading { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 17px; }
+.sai-section-eyebrow { display: block; margin-bottom: 6px; color: #a27b36; font-size: 8px; font-weight: 800; letter-spacing: 1.8px; }
+.sai-section-heading h2, .sai-panel-heading h2 { margin: 0; color: #342d23; font-size: 19px; font-weight: 800; letter-spacing: -.45px; }
+.sai-section-heading p { margin: 6px 0 0; color: #8e8578; font-size: 11px; line-height: 1.6; }
+.sai-management-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; }
+.sai-management-card {
+  min-height: 174px; padding: 17px 17px 15px; display: flex; flex-direction: column; align-items: flex-start;
+  border: 1px solid #eee7db; border-radius: 15px; background: rgba(255,255,255,.91);
+  box-shadow: 0 3px 12px rgba(58,43,20,.025); cursor: pointer; transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+.sai-management-card:hover, .sai-management-card:focus-visible { transform: translateY(-3px); border-color: #d9c18e; box-shadow: 0 12px 26px rgba(76,56,24,.07); outline: none; }
+.sai-management-icon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 11px; }
+.sai-management-icon svg { font-size: 19px; }
+.tone-gold { color: #987020; background: #f7f0e1; }
+.tone-rose { color: #a56d62; background: #f8eeeb; }
+.tone-sage { color: #64816a; background: #edf3ed; }
+.tone-lavender { color: #80749a; background: #f1eef7; }
+.tone-blue { color: #637f98; background: #edf2f6; }
+.sai-management-card-copy { margin-top: 13px; }
+.sai-management-card h3 { margin: 0 0 5px; color: #393126; font-size: 12px; font-weight: 800; }
+.sai-management-card p { min-height: 31px; margin: 0; color: #92897d; font-size: 10px; line-height: 1.55; }
+.sai-card-link { display: flex; align-items: center; gap: 5px; margin-top: auto; padding: 10px 0 0; border: 0; color: #99702a; background: transparent; font-size: 9px; font-weight: 800; cursor: pointer; }
+.sai-card-link svg { font-size: 14px; transition: transform .2s ease; }
+.sai-management-card:hover .sai-card-link svg { transform: translate(2px, -2px); }
+
+.sai-dashboard-content-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, .85fr); gap: 15px; margin-top: 17px; }
+.sai-dashboard-bottom-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; margin-top: 15px; }
+.sai-dashboard-panel { overflow: hidden; border: 1px solid #eee7db; border-radius: 15px; background: rgba(255,255,255,.94); box-shadow: 0 3px 12px rgba(58,43,20,.025); }
+.sai-panel-heading { min-height: 66px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #f1ece3; }
+.sai-panel-heading .sai-section-eyebrow { margin-bottom: 4px; }
+.sai-panel-heading h2 { font-size: 14px; }
+.sai-panel-link { display: inline-flex; align-items: center; gap: 5px; padding: 6px 0 6px 6px; border: 0; color: #98702b; background: transparent; font-size: 9px; font-weight: 800; white-space: nowrap; cursor: pointer; }
+.sai-panel-link svg { font-size: 13px; transition: transform .2s ease; }
+.sai-panel-link:hover svg { transform: translateX(3px); }
+.sai-empty-state { min-height: 220px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px 20px; text-align: center; }
+.sai-empty-state.is-compact { min-height: 155px; }
+.sai-empty-icon { width: 46px; height: 46px; display: grid; place-items: center; margin-bottom: 11px; border: 1px solid #f0e7d7; border-radius: 50%; color: #a27a34; background: #faf6ed; }
+.sai-empty-icon svg { font-size: 21px; }
+.sai-empty-state h3 { margin: 0 0 5px; color: #51483b; font-size: 11px; font-weight: 800; }
+.sai-empty-state p { max-width: 290px; margin: 0; color: #9a9185; font-size: 10px; line-height: 1.65; }
+.sai-panel-bottom-note { display: flex; align-items: center; gap: 7px; padding: 11px 17px; border-top: 1px solid #f3eee6; color: #8d8578; background: #fffdf9; font-size: 9px; }
+.sai-note-dot { width: 6px; height: 6px; border-radius: 50%; background: #b78c3d; }
+.sai-shortcut-count { color: #b39a6c; font-size: 10px; font-weight: 800; letter-spacing: 1px; }
+.sai-quick-action-list { padding: 3px 12px 8px; }
+.sai-quick-action { width: 100%; min-height: 52px; display: flex; align-items: center; gap: 10px; padding: 8px 6px; border: 0; border-bottom: 1px solid #f3efe8; text-align: left; background: transparent; cursor: pointer; transition: background .18s ease; }
+.sai-quick-action:last-child { border-bottom: 0; }
+.sai-quick-action:hover { border-radius: 9px; background: #fcf8ef; }
+.sai-quick-action-icon { width: 31px; height: 31px; flex: 0 0 31px; display: grid; place-items: center; border-radius: 9px; color: #98702b; background: #f7f1e5; }
+.sai-quick-action-icon svg { font-size: 17px; }
+.sai-quick-action-copy { display: flex; flex: 1; flex-direction: column; gap: 3px; }
+.sai-quick-action-copy strong { color: #4b4236; font-size: 10px; font-weight: 800; }
+.sai-quick-action-copy small { color: #9a9185; font-size: 9px; }
+.sai-quick-arrow { color: #b0a696; font-size: 15px !important; }
+.sai-dashboard-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 2px 0; color: #a39a8e; font-size: 9px; }
+.sai-dashboard-footer span:last-child { display: flex; align-items: center; gap: 5px; }
+.sai-dashboard-footer svg { color: #b18a43; font-size: 14px; }
+
+@media (max-width: 1100px) {
+  .sai-management-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sai-dashboard-content-grid { grid-template-columns: minmax(0, 1.2fr) minmax(285px, .8fr); }
+}
+@media (max-width: 820px) {
+  .sai-dashboard { padding: 22px 20px; }
+  .sai-date-label { display: none; }
+  .sai-dashboard-hero { min-height: 205px; }
+  .sai-hero-emblem { margin-right: 1%; }
+  .sai-dashboard-content-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+  .sai-dashboard { padding: 15px 13px calc(22px + env(safe-area-inset-bottom)); }
+  .sai-dashboard-topline { align-items: center; margin-bottom: 18px; }
+  .sai-dashboard-brand img { width: 42px; height: 42px; }
+  .sai-dashboard-brand strong { font-size: 13px; }
+  .sai-dashboard-brand span { font-size: 7px; letter-spacing: 1.3px; }
+  .sai-dashboard-top-actions { gap: 7px; }
+  .sai-notification-button { width: 36px; height: 36px; }
+  .sai-admin-chip { gap: 0; padding: 3px; }
+  .sai-admin-avatar { width: 29px; height: 29px; }
+  .sai-admin-copy, .sai-admin-chevron { display: none; }
+  .sai-dashboard-hero { min-height: 190px; padding: 25px 21px; margin-bottom: 26px; border-radius: 17px; }
+  .sai-hero-copy { max-width: 100%; }
+  .sai-hero-copy h1 { max-width: 330px; font-size: 29px; }
+  .sai-hero-copy > p { max-width: 330px; font-size: 10px; }
+  .sai-hero-location { margin-top: 15px; font-size: 9px; }
+  .sai-hero-emblem { display: none; }
+  .sai-section-heading { margin-bottom: 13px; }
+  .sai-section-heading h2 { font-size: 17px; }
+  .sai-section-heading p { max-width: 330px; font-size: 10px; }
+  .sai-management-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .sai-management-card { min-height: 158px; padding: 13px 12px 12px; border-radius: 13px; }
+  .sai-management-icon { width: 34px; height: 34px; border-radius: 10px; }
+  .sai-management-icon svg { font-size: 17px; }
+  .sai-management-card-copy { margin-top: 10px; }
+  .sai-management-card h3 { font-size: 11px; }
+  .sai-management-card p { min-height: 30px; font-size: 9px; }
+  .sai-card-link { font-size: 8px; }
+  .sai-dashboard-content-grid, .sai-dashboard-bottom-grid { gap: 11px; margin-top: 12px; }
+  .sai-dashboard-bottom-grid { grid-template-columns: 1fr; }
+  .sai-panel-heading { min-height: 61px; padding: 13px 14px; }
+  .sai-panel-heading h2 { font-size: 13px; }
+  .sai-panel-link { font-size: 8px; }
+  .sai-empty-state { min-height: 190px; }
+  .sai-empty-state.is-compact { min-height: 135px; }
+  .sai-quick-action { min-height: 50px; }
+  .sai-dashboard-footer { flex-direction: column; align-items: flex-start; padding-top: 17px; font-size: 8px; }
+}
+@media (max-width: 360px) {
+  .sai-dashboard { padding-left: 10px; padding-right: 10px; }
+  .sai-management-grid { gap: 7px; }
+  .sai-management-card { padding: 11px 10px; }
+  .sai-management-card p { font-size: 8px; }
+  .sai-card-link { font-size: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
