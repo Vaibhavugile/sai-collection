@@ -1,106 +1,341 @@
-.customer-card{
-    background:#fff;
-    border-radius:18px;
-    padding:22px;
-    border:1px solid #e5e7eb;
-    box-shadow:0 8px 24px rgba(0,0,0,.05);
+
+/* =====================================================
+   SAI COLLECTION — COMPACT PREMIUM CUSTOMER CARD
+===================================================== */
+
+.customer-card {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 19px 20px;
+  border: 1px solid #eae1d5;
+  border-radius: 16px;
+  background: #fffefa;
+  box-shadow: 0 5px 20px rgba(58, 43, 25, 0.035);
+  color: #342c24;
 }
 
-.card-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
+/* HEADER */
+
+.customer-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 17px;
 }
 
-.card-header h2{
-    margin:0;
-    font-size:20px;
-    color:#1f2937;
+.customer-heading-left {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
 }
 
-.new-customer-btn{
-    border:none;
-    background:#2563eb;
-    color:#fff;
-    padding:10px 18px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:600;
-    transition:.25s;
+.customer-heading-icon {
+  width: 39px;
+  height: 39px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid #e9dcc8;
+  border-radius: 11px;
+  background: #f6eee1;
+  color: #987345;
+  font-size: 17px;
 }
 
-.new-customer-btn:hover{
-    background:#1d4ed8;
+.customer-heading-left h2 {
+  margin: 0;
+  color: #382f26;
+  font-size: 15px;
+  font-weight: 850;
 }
 
-.customer-body{
-    display:flex;
-    flex-direction:column;
-    gap:18px;
+.customer-heading-left p {
+  margin: 4px 0 0;
+  color: #a09384;
+  font-size: 10px;
 }
 
-.form-group{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
+/* STATUS */
+
+.customer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 7px 10px;
+  border: 1px solid #e9dfd1;
+  border-radius: 30px;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
-.form-group label{
-    font-size:14px;
-    font-weight:600;
-    color:#374151;
+.customer-status.success {
+  border-color: #dce9d9;
+  background: #eff6ed;
+  color: #4e7955;
 }
 
-.form-group input{
-    padding:12px 14px;
-    border:1px solid #d1d5db;
-    border-radius:10px;
-    font-size:15px;
-    outline:none;
+.customer-status.new {
+  border-color: #ecdfc8;
+  background: #faf3e6;
+  color: #997344;
 }
 
-.form-group input:focus{
-    border-color:#2563eb;
+.customer-status.searching {
+  border-color: #e9dfd1;
+  background: #f8f3eb;
+  color: #90744f;
 }
 
-.customer-info{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:15px;
+.customer-status.default {
+  background: #f5f1ea;
+  color: #827665;
 }
 
-.info-box{
-    background:#f9fafb;
-    border:1px solid #e5e7eb;
-    border-radius:12px;
-    padding:16px;
+.customer-status-loader {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #e5d7c2;
+  border-top-color: #987345;
+  border-radius: 50%;
+  animation: customerSpin .7s linear infinite;
 }
 
-.info-box span{
-    display:block;
-    color:#6b7280;
-    font-size:13px;
-    margin-bottom:6px;
+@keyframes customerSpin {
+  to { transform: rotate(360deg); }
 }
 
-.info-box strong{
-    font-size:20px;
-    color:#111827;
+/* FORM */
+
+.customer-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
 }
 
-.search-customer-btn{
-    border:none;
-    background:#10b981;
-    color:#fff;
-    padding:13px;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:600;
-    font-size:15px;
-    transition:.25s;
+.customer-form-group {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
 }
 
-.search-customer-btn:hover{
-    background:#059669;
+.customer-form-group label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #776957;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.customer-form-group label svg {
+  color: #a17c4c;
+  font-size: 12px;
+}
+
+.customer-form-group input {
+  width: 100%;
+  height: 41px;
+  box-sizing: border-box;
+  padding: 0 12px;
+  border: 1px solid #e8dfd3;
+  border-radius: 9px;
+  outline: none;
+  background: #fffefa;
+  color: #40372e;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.customer-form-group input::placeholder {
+  color: #b0a496;
+  font-weight: 400;
+}
+
+.customer-form-group input:focus {
+  border-color: #b99a6b;
+  box-shadow: 0 0 0 3px rgba(185, 154, 107, .12);
+}
+
+.customer-form-group input:disabled {
+  background: #f7f4ee;
+  color: #a39889;
+  cursor: not-allowed;
+}
+
+.customer-form-group input[readonly] {
+  background: #f6f8f2;
+  color: #527354;
+  border-color: #e0e9db;
+}
+
+.customer-input-wrap {
+  position: relative;
+}
+
+.customer-input-wrap input {
+  padding-right: 34px;
+}
+
+.customer-input-indicator {
+  position: absolute;
+  top: 50%;
+  right: 11px;
+  display: flex;
+  align-items: center;
+  color: #a17c4c;
+  transform: translateY(-50%);
+}
+
+.customer-input-indicator.verified {
+  color: #57805d;
+}
+
+.customer-field-hint {
+  min-height: 12px;
+  color: #aa9e90;
+  font-size: 9px;
+}
+
+/* ERROR */
+
+.customer-lookup-error {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border: 1px solid #efd9d2;
+  border-radius: 8px;
+  background: #fbefeb;
+  color: #a15e50;
+  font-size: 10px;
+}
+
+/* CUSTOMER STATS */
+
+.customer-stats {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: 15px;
+  padding: 12px 14px;
+  border: 1px solid #eee5d8;
+  border-radius: 11px;
+  background: linear-gradient(110deg, #faf6ee, #fffdf9);
+}
+
+.customer-stat-item {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.customer-stat-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  font-size: 14px;
+}
+
+.customer-stat-icon.orders {
+  background: #f1e7d7;
+  color: #987345;
+}
+
+.customer-stat-icon.spent {
+  background: #edf4eb;
+  color: #648064;
+}
+
+.customer-stat-item > div:last-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.customer-stat-item span {
+  color: #988b7b;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.customer-stat-item strong {
+  overflow: hidden;
+  color: #41372d;
+  font-size: 13px;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.customer-stat-divider {
+  width: 1px;
+  height: 29px;
+  flex-shrink: 0;
+  background: #e8dece;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+  .customer-card {
+    padding: 15px;
+  }
+
+  .customer-form-grid {
+    grid-template-columns: 1fr;
+    gap: 11px;
+  }
+
+  .customer-card-header {
+    align-items: flex-start;
+  }
+
+  .customer-heading-left p {
+    max-width: 180px;
+    line-height: 1.4;
+  }
+
+  .customer-stats {
+    gap: 12px;
+    padding: 11px;
+  }
+
+  .customer-stat-item {
+    gap: 7px;
+  }
+
+  .customer-stat-icon {
+    width: 29px;
+    height: 29px;
+  }
+}
+
+@media (max-width: 380px) {
+  .customer-status {
+    padding: 6px 7px;
+    font-size: 8px;
+  }
+
+  .customer-heading-left h2 {
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .customer-form-group input,
+  .customer-status-loader {
+    animation: none;
+    transition: none;
+  }
 }

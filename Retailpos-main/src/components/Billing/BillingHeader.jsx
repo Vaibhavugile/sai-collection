@@ -1,23 +1,28 @@
+
 import "./BillingHeader.css";
 import { useEffect, useState } from "react";
+
+import {
+  FiShoppingBag,
+  FiFileText,
+  FiCalendar,
+  FiClock,
+  FiUser,
+} from "react-icons/fi";
 
 export default function BillingHeader({
   invoiceNumber = "",
   cashierName = "Administrator",
+  logoSrc = "/assets/logo.png",
 }) {
-
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
-
     const timer = setInterval(() => {
-
       setCurrentTime(new Date());
-
     }, 1000);
 
     return () => clearInterval(timer);
-
   }, []);
 
   const currentDate = currentTime.toLocaleDateString("en-IN", {
@@ -33,74 +38,97 @@ export default function BillingHeader({
     hour12: true,
   });
 
+  const details = [
+    {
+      label: "Invoice Number",
+      value: invoiceNumber || "New Invoice",
+      icon: <FiFileText />,
+      className: "invoice",
+    },
+    {
+      label: "Date",
+      value: currentDate,
+      icon: <FiCalendar />,
+      className: "date",
+    },
+    {
+      label: "Current Time",
+      value: currentClock,
+      icon: <FiClock />,
+      className: "time",
+    },
+    {
+      label: "Cashier",
+      value: cashierName,
+      icon: <FiUser />,
+      className: "cashier",
+    },
+  ];
+
   return (
+    <header className="billing-header">
 
-    <div className="billing-header">
+      {/* BRAND SECTION */}
+      <div className="billing-brand-section">
 
-      <div className="header-left">
+        <div className="billing-brand-logo">
+          <img
+            src={logoSrc}
+            alt="Sai Collection Logo"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
 
-        <h1>🛒 Retail POS Billing</h1>
-
-        <p>
-          Scan products, manage customers and complete sales quickly.
-        </p>
-
-      </div>
-
-      <div className="header-right">
-
-        <div className="header-card">
-
-          <span>Invoice No.</span>
-
-          <strong>
-
-            {invoiceNumber || "New Invoice"}
-
-          </strong>
-
+          <span className="billing-logo-fallback">साई</span>
         </div>
 
-        <div className="header-card">
+        <div className="billing-brand-content">
+          <div className="billing-brand-name">
+            Sai Collection
+          </div>
 
-          <span>Date</span>
+          <div className="billing-brand-location">
+            LATUR · MAHARASHTRA
+          </div>
 
-          <strong>
+          <div className="billing-brand-divider" />
 
-            {currentDate}
+          <div className="billing-page-title">
+            <FiShoppingBag />
+            <h1>Retail POS Billing</h1>
+          </div>
 
-          </strong>
-
-        </div>
-
-        <div className="header-card">
-
-          <span>Time</span>
-
-          <strong>
-
-            {currentClock}
-
-          </strong>
-
-        </div>
-
-        <div className="header-card">
-
-          <span>Cashier</span>
-
-          <strong>
-
-            {cashierName}
-
-          </strong>
-
+          <p>
+            Scan products, manage customers and complete sales effortlessly.
+          </p>
         </div>
 
       </div>
 
-    </div>
+      {/* BILLING INFORMATION */}
+      <div className="billing-header-details">
 
+        {details.map((item) => (
+          <div
+            className={`billing-info-card ${item.className}`}
+            key={item.label}
+          >
+            <div className="billing-info-icon">
+              {item.icon}
+            </div>
+
+            <div className="billing-info-content">
+              <span>{item.label}</span>
+              <strong title={String(item.value)}>
+                {item.value}
+              </strong>
+            </div>
+          </div>
+        ))}
+
+      </div>
+
+    </header>
   );
-
 }

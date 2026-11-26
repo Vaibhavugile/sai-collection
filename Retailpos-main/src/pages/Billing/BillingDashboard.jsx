@@ -104,10 +104,12 @@ export default function BillingDashboard() {
 
     <div className="billing-page">
 
-      <BillingHeader
+       <BillingHeader
         invoiceNumber={invoiceNumber}
         cashierName="Administrator"
+        logoSrc="/assets/sai-collection-logo.png"
       />
+
 
       <div className="billing-container">
 

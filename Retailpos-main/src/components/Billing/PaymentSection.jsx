@@ -1,5 +1,6 @@
+
+import React, { useState } from "react";
 import "./PaymentSection.css";
-import { useState } from "react";
 import { completeSale } from "../../services/checkoutService";
 
 export default function PaymentSection({
@@ -13,16 +14,33 @@ export default function PaymentSection({
   const [receivedAmount, setReceivedAmount] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const grandTotal = billSummary?.grandTotal ?? 0;
-
+  const grandTotal = Number(billSummary?.grandTotal || 0);
   const received = Number(receivedAmount || 0);
 
-  const change =
-    received > grandTotal
-      ? received - grandTotal
-      : 0;
+  const change = Math.max(received - grandTotal, 0);
+  const balance = Math.max(grandTotal - received, 0);
+
+  const formatAmount = (amount) =>
+    `₹ ${Number(amount || 0).toFixed(2)}`;
 
   const handleCompleteSale = async () => {
+    if (isProcessing) return;
+
+    if (!cart || cart.length === 0) {
+      alert("Please add products to the cart.");
+      return;
+    }
+
+    if (grandTotal <= 0) {
+      alert("Invalid bill amount.");
+      return;
+    }
+
+    if (received < grandTotal) {
+      alert("Received amount is less than the grand total.");
+      return;
+    }
+
     try {
       setIsProcessing(true);
 
@@ -43,7 +61,8 @@ export default function PaymentSection({
         onSaleCompleted(result);
       }
     } catch (error) {
-      alert(error.message);
+      console.error("Sale completion error:", error);
+      alert(error?.message || "Unable to complete sale.");
     } finally {
       setIsProcessing(false);
     }
@@ -51,117 +70,146 @@ export default function PaymentSection({
 
   return (
     <div className="payment-card">
-      <h2>Payment</h2>
 
+      {/* Header */}
+      <div className="payment-header">
+        <div className="payment-header-left">
+          <div className="payment-header-icon">₹</div>
+
+          <div>
+            <h2>Payment</h2>
+            <p>Choose payment method</p>
+          </div>
+        </div>
+
+        <span className="payment-header-badge">
+          CHECKOUT
+        </span>
+      </div>
+
+      {/* Payment Methods */}
       <div className="payment-methods">
+
         <button
-          className={
-            paymentMethod === "cash"
-              ? "active"
-              : ""
-          }
+          type="button"
+          className={paymentMethod === "cash" ? "active" : ""}
           disabled={isProcessing}
-          onClick={() =>
-            setPaymentMethod("cash")
-          }
+          onClick={() => setPaymentMethod("cash")}
         >
-          💵 Cash
+          <span className="payment-method-symbol">₹</span>
+          Cash
         </button>
 
         <button
-          className={
-            paymentMethod === "upi"
-              ? "active"
-              : ""
-          }
+          type="button"
+          className={paymentMethod === "upi" ? "active" : ""}
           disabled={isProcessing}
-          onClick={() =>
-            setPaymentMethod("upi")
-          }
+          onClick={() => setPaymentMethod("upi")}
         >
-          📱 UPI
+          <span className="payment-method-symbol">UPI</span>
+          UPI
         </button>
 
         <button
-          className={
-            paymentMethod === "card"
-              ? "active"
-              : ""
-          }
+          type="button"
+          className={paymentMethod === "card" ? "active" : ""}
           disabled={isProcessing}
-          onClick={() =>
-            setPaymentMethod("card")
-          }
+          onClick={() => setPaymentMethod("card")}
         >
-          💳 Card
+          <span className="payment-method-symbol">▤</span>
+          Card
         </button>
+
       </div>
 
+      {/* Amount Received */}
       <div className="payment-input">
-        <label>Amount Received</label>
 
-        <input
-          type="number"
-          placeholder="0.00"
-          value={receivedAmount}
-          disabled={isProcessing}
-          onChange={(e) =>
-            setReceivedAmount(e.target.value)
-          }
-        />
+        <label htmlFor="payment-received">
+          Amount Received
+        </label>
+
+        <div className="payment-input-wrap">
+          <span>₹</span>
+
+          <input
+            id="payment-received"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="Enter received amount"
+            value={receivedAmount}
+            disabled={isProcessing}
+            onChange={(e) => setReceivedAmount(e.target.value)}
+          />
+        </div>
+
+        {paymentMethod === "cash" && grandTotal > 0 && (
+          <button
+            type="button"
+            className="exact-amount-btn"
+            disabled={isProcessing}
+            onClick={() => setReceivedAmount(String(grandTotal))}
+          >
+            Use exact amount ({formatAmount(grandTotal)})
+          </button>
+        )}
+
       </div>
 
+      {/* Payment Details */}
       <div className="payment-summary">
-        <div>
+
+        <div className="payment-summary-row">
           <span>Grand Total</span>
+          <strong>{formatAmount(grandTotal)}</strong>
+        </div>
+
+        <div className="payment-summary-row">
+          <span>Received Amount</span>
+          <strong>{formatAmount(received)}</strong>
+        </div>
+
+        <div className={`payment-result-row ${received >= grandTotal ? "payment-change" : "payment-balance"}`}>
+          <span>
+            {received >= grandTotal ? "Change to Return" : "Balance Due"}
+          </span>
 
           <strong>
-            ₹ {grandTotal.toFixed(2)}
+            {formatAmount(received >= grandTotal ? change : balance)}
           </strong>
         </div>
 
-        <div>
-          <span>Received</span>
-
-          <strong>
-            ₹ {received.toFixed(2)}
-          </strong>
-        </div>
-
-        <div>
-          <span>Change</span>
-
-          <strong className="change">
-            ₹ {change.toFixed(2)}
-          </strong>
-        </div>
       </div>
 
+      {/* Actions */}
       <div className="payment-actions">
-        <button
-          className="hold-btn"
-          disabled={isProcessing}
-        >
-          Hold Bill
-        </button>
 
         <button
-          className="print-btn"
+          type="button"
+          className="payment-print-btn"
           disabled={isProcessing}
+          onClick={() => window.print()}
         >
           Print
         </button>
 
         <button
-          className="complete-btn"
-          disabled={isProcessing}
+          type="button"
+          className="payment-complete-btn"
+          disabled={
+            isProcessing ||
+            !cart?.length ||
+            grandTotal <= 0 ||
+            received < grandTotal
+          }
           onClick={handleCompleteSale}
         >
-          {isProcessing
-            ? "Processing..."
-            : "Complete Sale"}
+          {isProcessing ? "Processing..." : "Complete Sale"}
         </button>
+
       </div>
+
     </div>
   );
 }

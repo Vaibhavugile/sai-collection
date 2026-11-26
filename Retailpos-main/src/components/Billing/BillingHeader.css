@@ -1,67 +1,331 @@
+
+/* =====================================================
+   SAI COLLECTION — PREMIUM BILLING HEADER
+   Champagne Gold / Ivory / Warm Charcoal
+===================================================== */
+
 .billing-header {
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 25px;
-  background: #fff;
-  padding: 24px 30px;
-  border-radius: 18px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-  border: 1px solid #edf0f5;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 23px 26px;
+  margin-bottom: 22px;
+
+  background: linear-gradient(
+    115deg,
+    #fffefa 0%,
+    #fcf8f0 55%,
+    #f8f1e6 100%
+  );
+
+  border: 1px solid #e9dfd0;
+  border-radius: 19px;
+
+  box-shadow:
+    0 7px 25px rgba(58, 43, 25, 0.045),
+    0 1px 3px rgba(58, 43, 25, 0.025);
 }
 
-.header-left h1 {
-  margin: 0;
-  font-size: 30px;
-  color: #1f2937;
-}
+/* =====================================================
+   BRAND SECTION
+===================================================== */
 
-.header-left p {
-  margin-top: 8px;
-  color: #6b7280;
-  font-size: 15px;
-}
-
-.header-right {
+.billing-brand-section {
+  min-width: 260px;
   display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 17px;
 }
 
-.header-card {
-  min-width: 130px;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 12px 18px;
+.billing-brand-logo {
+  position: relative;
+  width: 75px;
+  height: 75px;
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #e5d2b1;
+  border-radius: 20px;
+
+  background: linear-gradient(
+    145deg,
+    #fffefa,
+    #f2e5d0
+  );
+
+  box-shadow:
+    0 5px 13px rgba(142, 107, 57, 0.10),
+    inset 0 0 0 4px rgba(255, 255, 255, 0.55);
 }
 
-.header-card span {
-  display: block;
-  font-size: 12px;
-  color: #6b7280;
-  margin-bottom: 4px;
+.billing-brand-logo img {
+  position: relative;
+  z-index: 2;
+  width: 88%;
+  height: 88%;
+  object-fit: contain;
+  border-radius: 15px;
 }
 
-.header-card strong {
-  color: #111827;
+.billing-logo-fallback {
+  position: absolute;
+  color: #987345;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.billing-brand-content {
+  min-width: 0;
+}
+
+.billing-brand-name {
+  color: #382f25;
+  font-size: 21px;
+  font-weight: 850;
+  letter-spacing: -0.6px;
+}
+
+.billing-brand-location {
+  margin-top: 4px;
+  color: #a17c4c;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 1.6px;
+}
+
+.billing-brand-divider {
+  width: 45px;
+  height: 2px;
+  margin: 11px 0;
+  border-radius: 5px;
+  background: linear-gradient(
+    90deg,
+    #b99a6b,
+    #e9d9bd
+  );
+}
+
+/* BILLING TITLE */
+
+.billing-page-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.billing-page-title svg {
+  color: #a17c4c;
+  font-size: 17px;
+}
+
+.billing-page-title h1 {
+  margin: 0;
+  color: #342c24;
+  font-size: 16px;
+  font-weight: 850;
+  letter-spacing: -0.3px;
+}
+
+.billing-brand-content > p {
+  margin: 6px 0 0;
+  color: #998b7c;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* =====================================================
+   HEADER INFORMATION CARDS
+===================================================== */
+
+.billing-header-details {
+  flex: 1;
+  min-width: 0;
+
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.billing-info-card {
+  min-width: 0;
+  min-height: 68px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px;
+
+  border: 1px solid #eee3d3;
+  border-radius: 13px;
+
+  background: rgba(255, 254, 250, 0.85);
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.billing-info-card:hover {
+  transform: translateY(-2px);
+  border-color: #d9c29e;
+  box-shadow: 0 6px 15px rgba(142, 107, 57, 0.08);
+}
+
+/* ICON */
+
+.billing-info-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 11px;
+
+  background: #f5ecdf;
+  color: #987345;
+
   font-size: 16px;
 }
 
-@media (max-width: 992px) {
+/* INDIVIDUAL ICON TONES */
 
+.billing-info-card.invoice .billing-info-icon {
+  background: #f4ead9;
+  color: #987345;
+}
+
+.billing-info-card.date .billing-info-icon {
+  background: #f8f0e5;
+  color: #a17c4c;
+}
+
+.billing-info-card.time .billing-info-icon {
+  background: #f0eee8;
+  color: #72634f;
+}
+
+.billing-info-card.cashier .billing-info-icon {
+  background: #edf4eb;
+  color: #648064;
+}
+
+/* TEXT */
+
+.billing-info-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.billing-info-content span {
+  color: #a09383;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.45px;
+  text-transform: uppercase;
+}
+
+.billing-info-content strong {
+  overflow: hidden;
+  color: #3d342a;
+  font-size: 12px;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1250px) {
   .billing-header {
-    flex-direction: column;
     align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
   }
 
-  .header-right {
+  .billing-header-details {
     width: 100%;
   }
+}
 
-  .header-card {
-    flex: 1;
-    min-width: 140px;
+@media (max-width: 850px) {
+  .billing-header-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .billing-header {
+    padding: 17px;
+    border-radius: 15px;
   }
 
+  .billing-brand-section {
+    gap: 12px;
+  }
+
+  .billing-brand-logo {
+    width: 57px;
+    height: 57px;
+    border-radius: 15px;
+  }
+
+  .billing-brand-name {
+    font-size: 18px;
+  }
+
+  .billing-brand-location {
+    font-size: 8px;
+  }
+
+  .billing-page-title h1 {
+    font-size: 14px;
+  }
+
+  .billing-brand-content > p {
+    font-size: 9px;
+  }
+
+  .billing-header-details {
+    gap: 8px;
+  }
+
+  .billing-info-card {
+    min-height: 60px;
+    gap: 8px;
+    padding: 9px;
+  }
+
+  .billing-info-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+  }
+
+  .billing-info-content span {
+    font-size: 8px;
+  }
+
+  .billing-info-content strong {
+    font-size: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .billing-info-card {
+    transition: none;
+  }
 }
