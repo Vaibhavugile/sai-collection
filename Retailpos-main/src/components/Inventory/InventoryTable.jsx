@@ -1,17 +1,23 @@
+
 import "./InventoryTable.css";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   DeleteOutlineRounded,
   EditOutlined,
+  HistoryRounded,
   Inventory2Outlined,
   VisibilityOutlined,
 } from "@mui/icons-material";
 
 const formatCurrency = (value) => {
   const amount = Number(value);
+
   if (!Number.isFinite(amount)) return "—";
-  return `₹ ${amount.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+
+  return `₹ ${amount.toLocaleString("en-IN", {
+    maximumFractionDigits: 2,
+  })}`;
 };
 
 export default function InventoryTable({
@@ -20,16 +26,19 @@ export default function InventoryTable({
   onEdit,
   onDelete,
   onView,
+  onHistory,
 }) {
   const navigate = useNavigate();
 
   const filteredProducts = useMemo(() => {
     const keyword = search.trim().toLowerCase();
+
     if (!keyword) return products;
 
-    return products.filter((product) =>
-      product.name?.toLowerCase().includes(keyword) ||
-      product.productCode?.toLowerCase().includes(keyword)
+    return products.filter(
+      (product) =>
+        product.name?.toLowerCase().includes(keyword) ||
+        product.productCode?.toLowerCase().includes(keyword)
     );
   }, [products, search]);
 
@@ -41,12 +50,34 @@ export default function InventoryTable({
     }
   };
 
+  const handleEdit = (product) => {
+    if (typeof onEdit === "function") {
+      onEdit(product);
+    } else {
+      navigate(`/products/edit/${product.id}`);
+    }
+  };
+
+  const handleHistory = (product) => {
+    if (typeof onHistory === "function") {
+      onHistory(product);
+    } else {
+      navigate(`/products/${product.id}/history`);
+    }
+  };
+
   if (filteredProducts.length === 0) {
     return (
       <section className="inventory-table-card">
         <div className="empty-state">
-          <div className="empty-icon"><Inventory2Outlined /></div>
-          <h3>{search ? "No matching products" : "No products found"}</h3>
+          <div className="empty-icon">
+            <Inventory2Outlined />
+          </div>
+
+          <h3>
+            {search ? "No matching products" : "No products found"}
+          </h3>
+
           <p>
             {search
               ? "Try another product name or product code."
@@ -81,11 +112,15 @@ export default function InventoryTable({
                 product.images?.[0]?.url ||
                 "";
 
-              const variants = Array.isArray(product.variants) ? product.variants : [];
+              const variants = Array.isArray(product.variants)
+                ? product.variants
+                : [];
 
               const variantPrices = variants
                 .map((variant) => Number(variant.sellingPrice))
-                .filter((price) => Number.isFinite(price) && price >= 0);
+                .filter(
+                  (price) => Number.isFinite(price) && price >= 0
+                );
 
               const startingPrice = variantPrices.length
                 ? Math.min(...variantPrices)
@@ -96,6 +131,7 @@ export default function InventoryTable({
 
               return (
                 <tr key={product.id}>
+                  {/* Product */}
                   <td>
                     <div className="inventory-product-cell">
                       {coverImage ? (
@@ -112,29 +148,66 @@ export default function InventoryTable({
                       )}
 
                       <div className="inventory-product-info">
-                        <strong>{product.name || "Unnamed product"}</strong>
-                        <span>{product.totalVariants ?? variants.length} variant(s)</span>
+                        <strong>
+                          {product.name || "Unnamed product"}
+                        </strong>
+
+                        <span>
+                          {product.totalVariants ?? variants.length} variant(s)
+                        </span>
                       </div>
                     </div>
                   </td>
 
-                  <td><span className="inventory-code">{product.productCode || "—"}</span></td>
-                  <td>{product.categoryName || "—"}</td>
-                  <td>{product.totalVariants ?? variants.length}</td>
+                  {/* Product Code */}
                   <td>
-                    <span className={`inventory-stock ${stock <= 0 ? "out" : stock <= 5 ? "low" : ""}`}>
+                    <span className="inventory-code">
+                      {product.productCode || "—"}
+                    </span>
+                  </td>
+
+                  {/* Category */}
+                  <td>{product.categoryName || "—"}</td>
+
+                  {/* Variants */}
+                  <td>
+                    {product.totalVariants ?? variants.length}
+                  </td>
+
+                  {/* Stock */}
+                  <td>
+                    <span
+                      className={`inventory-stock ${
+                        stock <= 0
+                          ? "out"
+                          : stock <= 5
+                          ? "low"
+                          : ""
+                      }`}
+                    >
                       {stock.toLocaleString("en-IN")}
                     </span>
                   </td>
+
+                  {/* Starting Price */}
                   <td className="inventory-price">
-                    {Number.isFinite(startingPrice) ? formatCurrency(startingPrice) : "—"}
+                    {Number.isFinite(startingPrice)
+                      ? formatCurrency(startingPrice)
+                      : "—"}
                   </td>
+
+                  {/* Status */}
                   <td>
-                    <span className={`inventory-status ${productStatus ? "active" : "inactive"}`}>
+                    <span
+                      className={`inventory-status ${
+                        productStatus ? "active" : "inactive"
+                      }`}
+                    >
                       {productStatus ? "Active" : "Inactive"}
                     </span>
                   </td>
 
+                  {/* Actions */}
                   <td>
                     <div className="inventory-row-actions">
                       <button
@@ -152,10 +225,21 @@ export default function InventoryTable({
                         title="Edit product"
                         aria-label={`Edit ${product.name || "product"}`}
                         className="inventory-action edit"
-                        onClick={() => onEdit?.(product)}
-                        disabled={typeof onEdit !== "function"}
+                        onClick={() => handleEdit(product)}
                       >
                         <EditOutlined />
+                      </button>
+
+                      <button
+                        type="button"
+                        title="View edit history"
+                        aria-label={`View edit history for ${
+                          product.name || "product"
+                        }`}
+                        className="inventory-action history"
+                        onClick={() => handleHistory(product)}
+                      >
+                        <HistoryRounded />
                       </button>
 
                       <button
@@ -178,7 +262,8 @@ export default function InventoryTable({
       </div>
 
       <div className="inventory-table-footer">
-        Showing {filteredProducts.length.toLocaleString("en-IN")} product(s)
+        Showing{" "}
+        {filteredProducts.length.toLocaleString("en-IN")} product(s)
       </div>
     </section>
   );

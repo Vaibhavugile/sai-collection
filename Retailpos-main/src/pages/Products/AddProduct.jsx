@@ -1,7 +1,9 @@
+
 import {
   useEffect,
   useState,
 } from "react";
+
 import { useNavigate } from "react-router-dom";
 
 import "./AddProduct.css";
@@ -14,200 +16,332 @@ import VariantTable from "../../components/product/VariantTable/VariantTable";
 import ProductValidation from "../../components/product/ProductValidation/ProductValidation";
 import ProductHeader from "../../components/product/ProductHeader/ProductHeader";
 import BarcodePrint from "../../components/barcode/BarcodePrint";
+
 import {
   addProduct,
   getPreviewProductCode,
 } from "../../services/productService";
+
+import {
+  AddCircleOutlineRounded,
+  ArrowBackRounded,
+  CheckCircleOutlineRounded,
+  Inventory2Outlined,
+  SaveRounded,
+  StorefrontOutlined,
+} from "@mui/icons-material";
+
 export default function AddProduct() {
   const navigate = useNavigate();
 
-  /* ===========================================
-      STATES
-  =========================================== */
+  const [loading, setLoading] = useState(false);
+  const [codeLoading, setCodeLoading] = useState(true);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [product, setProduct] = useState({
+    productCode: "",
+    name: "",
+    description: "",
 
-  const [product, setProduct] =
-    useState({
-      productCode: "",
+    categoryId: "",
+    categoryName: "",
 
-      name: "",
+    subCategoryId: "",
+    subCategoryName: "",
 
-      description: "",
+    images: [],
 
-      categoryId: "",
-      categoryName: "",
+    selectedColors: [],
+    selectedSizes: [],
 
-      subCategoryId: "",
-      subCategoryName: "",
+    variants: [],
 
-      images: [],
+    status: "active",
+  });
 
-      selectedColors: [],
+  /* =====================================================
+     LOAD PRODUCT CODE
+  ===================================================== */
 
-selectedSizes: [],
+  useEffect(() => {
+    let mounted = true;
 
-      variants: [],
+    const loadProductCode = async () => {
+      try {
+        setCodeLoading(true);
 
-      status: "active",
-    });
+        const code = await getPreviewProductCode();
 
-  /* ===========================================
-      SAVE PRODUCT
-  =========================================== */
-/* ===========================================
-    LOAD PRODUCT CODE
-=========================================== */
+        if (mounted) {
+          setProduct((prev) => ({
+            ...prev,
+            productCode: code,
+          }));
+        }
+      } catch (error) {
+        console.error("Product code loading failed:", error);
+      } finally {
+        if (mounted) {
+          setCodeLoading(false);
+        }
+      }
+    };
 
-useEffect(() => {
-  const loadProductCode = async () => {
+    loadProductCode();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  /* =====================================================
+     SAVE PRODUCT
+  ===================================================== */
+
+  const handleSaveProduct = async () => {
+    if (loading) return;
+
     try {
-      const code =
-        await getPreviewProductCode();
+      setLoading(true);
 
-      setProduct((prev) => ({
-        ...prev,
-        productCode: code,
-      }));
+      const productCode = await addProduct(product);
+
+      alert(
+        `Product ${productCode} created successfully.`
+      );
+
+      // Stay on the page so the user can print the barcode
+      // or continue working with the product.
     } catch (error) {
-      console.error(error);
+      console.error("Product save failed:", error);
+
+      alert(
+        error?.message || "Failed to save product. Please try again."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  loadProductCode();
-}, []);
-  /* ===========================================
-    SAVE PRODUCT
-=========================================== */
+  /* =====================================================
+     CANCEL
+  ===================================================== */
 
-const handleSaveProduct = async () => {
-  try {
-    setLoading(true);
+  const handleCancel = () => {
+    if (loading) return;
 
-    const productCode =
-      await addProduct(product);
+    navigate("/inventory");
+  };
 
-    alert(
-      `Product ${productCode} created successfully.`
-    );
-
-    
-
-  } catch (error) {
-
-    console.error(error);
-
-    alert(
-      "Failed to save product."
-    );
-
-  } finally {
-
-    setLoading(false);
-
-  }
-};
+  /* =====================================================
+     RENDER
+  ===================================================== */
 
   return (
-    <div className="add-product-page">
+    <main className="add-product-page">
 
-      {/* ===========================================
-          HEADER
-      =========================================== */}
+      <div className="add-product-container">
 
-      <ProductHeader
-  productCode={product.productCode}
-/>
+        {/* ==========================================
+            TOP INTRODUCTION
+        ========================================== */}
 
-      <div>
-                {/* ===========================================
-            BASIC INFORMATION
-        =========================================== */}
+        <section className="add-product-intro">
 
-        <ProductBasicInfo
-          product={product}
-          setProduct={setProduct}
-        />
+          <div className="add-product-intro-content">
 
-        {/* ===========================================
-            PRODUCT IMAGES
-        =========================================== */}
+            <div className="add-product-breadcrumb">
+              <StorefrontOutlined />
+              <span>SAI COLLECTION</span>
+              <span className="breadcrumb-divider">/</span>
+              <span>INVENTORY</span>
+            </div>
 
-        {/* <ProductImages
-          product={product}
-          setProduct={setProduct}
-        /> */}
+            <div className="add-product-title-row">
 
-        {/* ===========================================
-            CATEGORY
-        =========================================== */}
+              <div className="add-product-title-icon">
+                <AddCircleOutlineRounded />
+              </div>
 
-        <ProductCategory
-          product={product}
-          setProduct={setProduct}
-        />
+              <div>
+                <span className="add-product-eyebrow">
+                  PRODUCT MANAGEMENT
+                </span>
 
-        {/* ===========================================
-            VARIANT GENERATOR
-        =========================================== */}
+                <h1>Add New Product</h1>
 
-        <VariantGenerator
-          product={product}
-          setProduct={setProduct}
-        />
+                <p>
+                  Create a product, configure its variants and
+                  manage your inventory.
+                </p>
+              </div>
 
-        {/* ===========================================
-            VARIANT TABLE
-        =========================================== */}
+            </div>
 
-        <VariantTable
-          product={product}
-          setProduct={setProduct}
-        />
+          </div>
 
-        {/* ===========================================
-            VALIDATION
-        =========================================== */}
+          <div className="add-product-intro-decoration">
+            <Inventory2Outlined />
+          </div>
 
-        <ProductValidation
-          product={product}
-        />
-        <BarcodePrint
-  product={product}
-/>
+        </section>
 
-        {/* ===========================================
-            FOOTER
-        =========================================== */}
+        {/* ==========================================
+            PRODUCT HEADER
+        ========================================== */}
 
-        <div className="product-page-footer">
-
-          <button
-            type="button"
-            className="cancel-btn"
-            onClick={() =>
-              navigate("/products")
+        <div className="add-product-header-wrap">
+          <ProductHeader
+            productCode={
+              codeLoading
+                ? "Generating..."
+                : product.productCode
             }
-          >
-            Cancel
-          </button>
+          />
+        </div>
 
-          <button
-  type="button"
-  className="save-btn"
-  disabled={loading}
-  onClick={handleSaveProduct}
->
-  {loading ? "Saving..." : "Save Product"}
-</button>
+        {/* ==========================================
+            PRODUCT FORM CONTENT
+        ========================================== */}
 
+        <div className="add-product-content">
+
+          <div className="add-product-section-heading">
+            <div>
+              <span>PRODUCT CONFIGURATION</span>
+              <h2>Product Information</h2>
+            </div>
+
+            <div className="add-product-required-note">
+              <span>*</span> Required information
+            </div>
+          </div>
+
+          {/* BASIC INFORMATION */}
+
+          <section className="add-product-section">
+            <ProductBasicInfo
+              product={product}
+              setProduct={setProduct}
+            />
+          </section>
+
+          {/* PRODUCT IMAGES */}
+
+          {/*
+          <section className="add-product-section">
+            <ProductImages
+              product={product}
+              setProduct={setProduct}
+            />
+          </section>
+          */}
+
+          {/* CATEGORY */}
+
+          <section className="add-product-section">
+            <ProductCategory
+              product={product}
+              setProduct={setProduct}
+            />
+          </section>
+
+          {/* VARIANT GENERATOR */}
+
+          <section className="add-product-section">
+            <VariantGenerator
+              product={product}
+              setProduct={setProduct}
+            />
+          </section>
+
+          {/* VARIANT TABLE */}
+
+          <section className="add-product-section">
+            <VariantTable
+              product={product}
+              setProduct={setProduct}
+            />
+          </section>
+
+          {/* VALIDATION */}
+
+          <section className="add-product-section add-product-validation-section">
+            <ProductValidation
+              product={product}
+            />
+          </section>
+
+          {/* BARCODE */}
+
+          <section className="add-product-section">
+            <BarcodePrint
+              product={product}
+            />
+          </section>
+
+        </div>
+
+        {/* ==========================================
+            FOOTER ACTIONS
+        ========================================== */}
+
+        <footer className="product-page-footer">
+
+          <div className="product-footer-information">
+            <div className="product-footer-icon">
+              <CheckCircleOutlineRounded />
+            </div>
+
+            <div>
+              <strong>Almost ready?</strong>
+              <span>
+                Review your product details before saving.
+              </span>
+            </div>
+          </div>
+
+          <div className="product-footer-actions">
+
+            <button
+              type="button"
+              className="cancel-btn"
+              onClick={handleCancel}
+              disabled={loading}
+            >
+              <ArrowBackRounded />
+              <span>Cancel</span>
+            </button>
+
+            <button
+              type="button"
+              className="save-btn"
+              disabled={loading || codeLoading}
+              onClick={handleSaveProduct}
+            >
+              {loading ? (
+                <>
+                  <span className="save-button-spinner" />
+                  <span>Saving Product...</span>
+                </>
+              ) : (
+                <>
+                  <SaveRounded />
+                  <span>Save Product</span>
+                </>
+              )}
+            </button>
+
+          </div>
+
+        </footer>
+
+        <div className="add-product-bottom-note">
+          <span>SAI COLLECTION</span>
+          <span>Inventory Management · Latur</span>
         </div>
 
       </div>
 
-    </div>
-
+    </main>
   );
-
 }

@@ -1,451 +1,1182 @@
-/* ===========================================
-   DIALOG OVERLAY
-=========================================== */
 
-.print-dialog-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(15,23,42,.45);
-    backdrop-filter:blur(6px);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-    padding:30px;
+/* =========================================================
+   SAI COLLECTION - PREMIUM BARCODE PRINT DIALOG
+   Ivory / Champagne Gold
+========================================================= */
+
+.print-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(34, 30, 23, 0.48);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+
+  animation: printOverlayIn 0.22s ease both;
 }
 
-/* ===========================================
-   DIALOG
-=========================================== */
+@keyframes printOverlayIn {
+  from {
+    opacity: 0;
+  }
 
-.print-dialog{
-    width:100%;
-    max-width:900px;
-    max-height:90vh;
-    overflow:auto;
-
-    background:#fff;
-    border-radius:20px;
-
-    padding:28px;
-
-    box-shadow:
-        0 25px 60px rgba(0,0,0,.15);
-
-    animation:dialogIn .25s ease;
+  to {
+    opacity: 1;
+  }
 }
 
-@keyframes dialogIn{
+/* =========================================================
+   MAIN DIALOG
+========================================================= */
 
-    from{
+.print-dialog {
+  --print-gold: #b49359;
+  --print-gold-dark: #92713b;
+  --print-ink: #302d25;
+  --print-muted: #918979;
+  --print-border: #ece6da;
 
-        opacity:0;
-        transform:translateY(20px) scale(.96);
+  position: relative;
 
-    }
+  display: flex;
+  flex-direction: column;
 
-    to{
+  width: 100%;
+  max-width: 920px;
+  max-height: min(90vh, 900px);
 
-        opacity:1;
-        transform:none;
+  padding: 0;
 
-    }
+  overflow: hidden;
+  overflow-y: auto;
+  border: 1px solid #e9e1d2;
+  border-radius: 20px;
 
+  background: #fff;
+
+  color: var(--print-ink);
+
+  box-shadow:
+    0 28px 80px rgba(27, 23, 16, 0.23),
+    0 5px 18px rgba(27, 23, 16, 0.08);
+
+  animation: printDialogIn 0.3s cubic-bezier(.2, .8, .2, 1) both;
 }
 
-.print-dialog h2{
+@keyframes printDialogIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
 
-    margin:0 0 24px;
-    font-size:28px;
-    font-weight:700;
-    color:#111827;
-
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-/* ===========================================
-   FORM
-=========================================== */
+/* =========================================================
+   HEADER
+========================================================= */
 
-.form-group{
+.print-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
 
-    margin-bottom:20px;
+  padding: 23px 27px;
 
+  border-bottom: 1px solid #eee9df;
+
+  background:
+    radial-gradient(
+      circle at 95% 0%,
+      rgba(195, 165, 107, 0.10),
+      transparent 35%
+    ),
+    #fffefa;
+
+  flex-shrink: 0;
 }
 
-.form-group label{
-
-    display:block;
-    margin-bottom:8px;
-
-    font-size:14px;
-    font-weight:600;
-
-    color:#374151;
-
+.print-dialog-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
 }
 
-.form-group input,
-.form-group select{
+.print-dialog-heading-icon {
+  width: 49px;
+  height: 49px;
 
-    width:100%;
-    height:46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    border:1px solid #d1d5db;
+  flex-shrink: 0;
 
-    border-radius:12px;
+  border: 1px solid #e9dec9;
+  border-radius: 14px;
 
-    padding:0 14px;
+  background: linear-gradient(145deg, #f8f1e4, #eee2cb);
 
-    font-size:15px;
-
-    transition:.2s;
-
-    background:#fff;
-
+  color: #9b7b42;
 }
 
-.form-group input:focus,
-.form-group select:focus{
-
-    outline:none;
-
-    border-color:#2563eb;
-
-    box-shadow:
-        0 0 0 4px rgba(37,99,235,.15);
-
+.print-dialog-heading-icon svg {
+  font-size: 25px;
 }
 
-/* ===========================================
+.print-dialog-eyebrow {
+  display: block;
+  margin-bottom: 4px;
+
+  color: #a1844f;
+
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.print-dialog-header h2 {
+  margin: 0;
+
+  color: #302d25;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.print-dialog-heading p {
+  margin: 5px 0 0;
+
+  color: #918979;
+
+  font-size: 11px;
+}
+
+.print-dialog-close {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid #eee7da;
+  border-radius: 11px;
+
+  background: #fff;
+  color: #827967;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.print-dialog-close svg {
+  font-size: 21px;
+}
+
+.print-dialog-close:hover {
+  border-color: #dfcba7;
+  background: #f8f2e7;
+  color: #92713b;
+  transform: rotate(90deg);
+}
+
+/* =========================================================
+   PRODUCT SUMMARY
+========================================================= */
+
+.print-product-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 17px 19px;
+  margin: 20px 25px 0;
+
+  border: 1px solid #eee5d5;
+  border-radius: 13px;
+
+  background: linear-gradient(110deg, #fffdf8, #faf7ef);
+}
+
+.print-product-icon {
+  width: 43px;
+  height: 43px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 12px;
+
+  background: #f1e9d9;
+  color: #9a7b47;
+}
+
+.print-product-icon svg {
+  font-size: 23px;
+}
+
+.print-product-details {
+  min-width: 0;
+  flex: 1;
+}
+
+.print-product-details > span {
+  color: #a18b62;
+
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+}
+
+.print-product-details h3 {
+  margin: 4px 0;
+
+  overflow-wrap: anywhere;
+
+  color: #373328;
+
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.print-product-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+
+  color: #918979;
+
+  font-size: 10px;
+}
+
+.print-product-meta strong {
+  color: #776744;
+}
+
+.print-product-meta i {
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+
+  background: #c6b18b;
+}
+
+.print-product-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 7px 10px;
+
+  flex-shrink: 0;
+
+  border: 1px solid #e3ebde;
+  border-radius: 20px;
+
+  background: #f5f9f2;
+  color: #6f8a62;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.print-product-status svg {
+  font-size: 15px;
+}
+
+/* =========================================================
+   CONFIGURATION GRID
+========================================================= */
+
+.print-config-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px;
+
+  padding: 20px 25px 0;
+}
+
+.print-form-group {
+  min-width: 0;
+}
+
+.print-form-group label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-bottom: 9px;
+
+  color: #625a4b;
+
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.print-form-group label svg {
+  color: #a78b58;
+  font-size: 17px;
+}
+
+.print-form-group input,
+.print-form-group select {
+  display: block;
+
+  width: 100%;
+  height: 44px;
+
+  padding: 0 13px;
+
+  border: 1px solid #e7e1d6;
+  border-radius: 9px;
+
+  outline: none;
+
+  background: #fff;
+  color: #39352b;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.print-form-group input:focus,
+.print-form-group select:focus {
+  border-color: #b99a61;
+  background: #fffefa;
+
+  box-shadow: 0 0 0 3px rgba(181, 148, 90, 0.12);
+}
+
+.print-form-group input::placeholder {
+  color: #b2ab9f;
+}
+
+.print-form-group small {
+  display: block;
+  margin-top: 7px;
+
+  color: #a39a8c;
+
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   VARIANTS SECTION
+========================================================= */
+
+.print-variants-section {
+  min-width: 0;
+  padding: 22px 25px 0;
+}
+
+.print-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 15px;
+
+  margin-bottom: 14px;
+}
+
+.print-section-eyebrow {
+  color: #a58a59;
+
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.print-section-heading h3 {
+  margin: 5px 0;
+
+  color: #373328;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.print-section-heading p {
+  margin: 0;
+
+  color: #999184;
+
+  font-size: 10px;
+}
+
+.print-variant-count {
+  padding: 7px 11px;
+
+  border: 1px solid #eee4d1;
+  border-radius: 20px;
+
+  background: #faf6ed;
+  color: #927744;
+
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+/* =========================================================
    SELECT ALL
-=========================================== */
+========================================================= */
 
-.select-all{
+.print-select-all {
+  display: flex;
+  align-items: center;
+  gap: 11px;
 
-    display:flex;
-    align-items:center;
-    gap:10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
 
-    margin:20px 0;
+  border: 1px solid #eee8dc;
+  border-radius: 10px;
 
-    font-weight:600;
+  background: #fffefa;
 
-    font-size:15px;
-
-    color:#111827;
-
+  cursor: pointer;
 }
 
-.select-all input{
-
-    width:18px;
-    height:18px;
-
+.print-select-all > input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
 }
 
-/* ===========================================
-   TABLE
-=========================================== */
+.print-custom-checkbox {
+  width: 19px;
+  height: 19px;
 
-.variants-table{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    border:1px solid #e5e7eb;
+  flex-shrink: 0;
 
-    border-radius:16px;
+  border: 1px solid #d9d0bf;
+  border-radius: 5px;
 
-    overflow:hidden;
+  background: #fff;
+  color: transparent;
 
-    margin-bottom:24px;
-
+  transition: all 0.2s ease;
 }
 
-.variants-table table{
-
-    width:100%;
-    border-collapse:collapse;
-
+.print-custom-checkbox svg {
+  font-size: 16px;
 }
 
-.variants-table thead{
-
-    background:#f9fafb;
-
+.print-select-all input:checked + .print-custom-checkbox {
+  border-color: #ad8c51;
+  background: #ad8c51;
+  color: #fff;
 }
 
-.variants-table th{
-
-    padding:14px;
-
-    text-align:left;
-
-    font-size:14px;
-
-    color:#6b7280;
-
-    font-weight:700;
-
+.print-select-all input:focus-visible + .print-custom-checkbox {
+  outline: 3px solid rgba(181, 148, 90, 0.2);
 }
 
-.variants-table td{
-
-    padding:14px;
-
-    border-top:1px solid #f1f5f9;
-
-    vertical-align:middle;
-
+.print-select-all-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-.variants-table tbody tr{
-
-    transition:.2s;
-
+.print-select-all-text strong {
+  color: #494336;
+  font-size: 11px;
+  font-weight: 750;
 }
 
-.variants-table tbody tr:hover{
-
-    background:#f8fbff;
-
+.print-select-all-text small {
+  color: #9a9284;
+  font-size: 9px;
 }
 
-/* ===========================================
-   QTY CONTROL
-=========================================== */
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
 
-.qty-control{
+.print-variants-table-wrap {
+  width: 100%;
 
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
+  overflow: auto;
 
+  border: 1px solid #ebe5d9;
+  border-radius: 12px;
+
+  background: #fff;
 }
 
-.qty-control button{
+.print-variants-table {
+  width: 100%;
+  min-width: 660px;
 
-    width:34px;
-    height:34px;
-
-    border:none;
-
-    border-radius:10px;
-
-    background:#f3f4f6;
-
-    cursor:pointer;
-
-    font-size:18px;
-
-    font-weight:700;
-
-    transition:.2s;
-
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.qty-control button:hover{
-
-    background:#2563eb;
-    color:#fff;
-
+.print-variants-table thead {
+  background: #faf8f3;
 }
 
-.qty-control input{
+.print-variants-table th {
+  padding: 13px 12px;
 
-    width:70px;
+  border-bottom: 1px solid #ece6da;
 
-    height:36px;
+  color: #84785f;
 
-    text-align:center;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
 
-    border:1px solid #d1d5db;
-
-    border-radius:10px;
-
-    font-size:15px;
-
-    font-weight:600;
-
+  text-align: left;
+  white-space: nowrap;
 }
 
-/* ===========================================
-   TOTAL
-=========================================== */
+.print-variants-table td {
+  padding: 12px;
 
-.total-card{
+  border-bottom: 1px solid #f1eee8;
 
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+  color: #514b40;
 
-    background:#eff6ff;
-
-    border:1px solid #bfdbfe;
-
-    border-radius:14px;
-
-    padding:18px 20px;
-
-    margin-top:20px;
-
+  font-size: 11px;
+  vertical-align: middle;
 }
 
-.total-card span{
-
-    color:#1e40af;
-    font-weight:600;
-
+.print-variants-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-.total-card h3{
-
-    margin:0;
-
-    color:#2563eb;
-
-    font-size:28px;
-
+.print-variants-table tbody tr {
+  transition: background 0.2s ease;
 }
 
-/* ===========================================
+.print-variants-table tbody tr:hover {
+  background: #fffdf8;
+}
+
+.print-variants-table tbody tr.is-selected {
+  background: #fffefa;
+}
+
+.print-check-column {
+  width: 65px;
+  text-align: center !important;
+}
+
+.print-variants-table input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+
+  accent-color: #ad8c51;
+
+  cursor: pointer;
+}
+
+.print-variant-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  min-width: 110px;
+}
+
+.print-variant-name strong {
+  color: #494336;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.print-variant-dot {
+  width: 7px;
+  height: 7px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #c2a36b;
+}
+
+.print-barcode-value {
+  display: inline-block;
+
+  padding: 5px 8px;
+
+  border: 1px solid #eee9df;
+  border-radius: 6px;
+
+  background: #faf9f6;
+  color: #82775f;
+
+  font-family: monospace;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.print-stock-value {
+  color: #5d7053;
+  font-size: 11px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   QUANTITY CONTROL
+========================================================= */
+
+.print-qty-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 3px;
+
+  border: 1px solid #e9e3d7;
+  border-radius: 8px;
+
+  background: #fff;
+}
+
+.print-qty-control button {
+  width: 27px;
+  height: 27px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 6px;
+
+  background: #f7f3eb;
+  color: #907343;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.print-qty-control button svg {
+  font-size: 16px;
+}
+
+.print-qty-control button:hover:not(:disabled) {
+  background: #b49359;
+  color: #fff;
+}
+
+.print-qty-control button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.print-qty-control input {
+  width: 43px;
+  height: 27px;
+
+  padding: 0;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+  color: #39352b;
+
+  font-size: 11px;
+  font-weight: 750;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.print-qty-control input::-webkit-inner-spin-button,
+.print-qty-control input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+/* =========================================================
+   EMPTY VARIANTS
+========================================================= */
+
+.print-no-variants {
+  min-height: 140px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  color: #9b927f;
+  text-align: center;
+}
+
+.print-no-variants svg {
+  font-size: 29px;
+  color: #b49a6c;
+}
+
+.print-no-variants strong {
+  color: #655c4b;
+  font-size: 12px;
+}
+
+.print-no-variants span {
+  font-size: 10px;
+}
+
+/* =========================================================
+   SUMMARY GRID
+========================================================= */
+
+.print-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+
+  padding: 18px 25px 22px;
+}
+
+.print-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px 16px;
+
+  border: 1px solid #eee8dc;
+  border-radius: 11px;
+
+  background: #fff;
+}
+
+.print-summary-icon {
+  width: 39px;
+  height: 39px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 11px;
+
+  background: #f5f0e6;
+  color: #a1844f;
+}
+
+.print-summary-icon svg {
+  font-size: 21px;
+}
+
+.print-summary-card > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.print-summary-card span {
+  color: #9a8e78;
+
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.print-summary-card strong {
+  color: #383328;
+
+  font-size: 22px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.print-summary-card-highlight {
+  border-color: #e8dcc5;
+  background: linear-gradient(110deg, #fffaf0, #faf5e9);
+}
+
+.print-summary-card-highlight .print-summary-icon {
+  background: #eee3cd;
+  color: #96743e;
+}
+
+.print-summary-card-highlight strong {
+  color: #92713b;
+}
+
+/* =========================================================
    FOOTER
-=========================================== */
+========================================================= */
 
-.dialog-footer{
+.print-dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
 
-    display:flex;
-    justify-content:flex-end;
-    gap:14px;
+  padding: 15px 25px;
 
-    margin-top:28px;
+  border-top: 1px solid #eee8dc;
 
+  background: #fffefa;
+
+  flex-shrink: 0;
 }
 
-.cancel-btn{
+.print-footer-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
 
-    height:46px;
+  min-width: 0;
 
-    min-width:120px;
-
-    border:none;
-
-    border-radius:12px;
-
-    background:#f3f4f6;
-
-    cursor:pointer;
-
-    font-weight:600;
-
-    transition:.2s;
-
+  color: #8e887b;
+  font-size: 10px;
 }
 
-.cancel-btn:hover{
-
-    background:#e5e7eb;
-
+.print-footer-note svg {
+  flex-shrink: 0;
+  color: #80936e;
+  font-size: 17px;
 }
 
-.print-btn{
-
-    height:46px;
-
-    min-width:150px;
-
-    border:none;
-
-    border-radius:12px;
-
-    background:#2563eb;
-
-    color:#fff;
-
-    cursor:pointer;
-
-    font-weight:700;
-
-    transition:.2s;
-
+.print-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-.print-btn:hover{
+/* =========================================================
+   FOOTER BUTTONS
+========================================================= */
 
-    background:#1d4ed8;
+.print-dialog-reset,
+.print-dialog-cancel,
+.print-dialog-submit {
+  height: 41px;
 
-    transform:translateY(-2px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
 
-    box-shadow:
-        0 10px 25px rgba(37,99,235,.35);
+  padding: 0 14px;
 
+  border-radius: 9px;
+
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 750;
+
+  transition: all 0.22s ease;
 }
 
-/* ===========================================
+.print-dialog-reset svg,
+.print-dialog-cancel svg,
+.print-dialog-submit svg {
+  font-size: 17px;
+}
+
+.print-dialog-reset {
+  border: 1px solid #e9e2d6;
+  background: #fff;
+  color: #82765e;
+}
+
+.print-dialog-reset:hover {
+  border-color: #d6c5a6;
+  background: #faf6ed;
+  color: #92713b;
+}
+
+.print-dialog-cancel {
+  border: 1px solid #e8e3da;
+  background: #f7f6f3;
+  color: #716959;
+}
+
+.print-dialog-cancel:hover {
+  border-color: #d6cfc2;
+  background: #efede7;
+}
+
+.print-dialog-submit {
+  min-width: 145px;
+
+  border: 1px solid #a98a52;
+
+  background: linear-gradient(
+    135deg,
+    #c5a66e,
+    #a9874e
+  );
+
+  color: #fff;
+
+  box-shadow: 0 5px 13px rgba(157, 121, 56, 0.16);
+}
+
+.print-dialog-submit:hover:not(:disabled) {
+  border-color: #98753e;
+
+  background: linear-gradient(
+    135deg,
+    #b9985d,
+    #96723d
+  );
+
+  box-shadow: 0 7px 17px rgba(157, 121, 56, 0.23);
+
+  transform: translateY(-1px);
+}
+
+.print-dialog-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* =========================================================
    SCROLLBAR
-=========================================== */
+========================================================= */
 
-.print-dialog::-webkit-scrollbar{
-
-    width:8px;
-
+.print-dialog::-webkit-scrollbar,
+.print-variants-table-wrap::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
 }
 
-.print-dialog::-webkit-scrollbar-thumb{
-
-    background:#d1d5db;
-
-    border-radius:20px;
-
+.print-dialog::-webkit-scrollbar-thumb,
+.print-variants-table-wrap::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: #d7cbb5;
 }
 
-.print-dialog::-webkit-scrollbar-thumb:hover{
-
-    background:#9ca3af;
-
-}
-.product-summary{
-    margin-bottom:20px;
-    padding:16px;
-    border:1px solid #e5e7eb;
-    border-radius:14px;
-    background:#f8fafc;
+.print-dialog::-webkit-scrollbar-thumb:hover,
+.print-variants-table-wrap::-webkit-scrollbar-thumb:hover {
+  background: #b49359;
 }
 
-.product-summary h3{
-    margin:0;
-    font-size:20px;
-    color:#111827;
+.print-dialog::-webkit-scrollbar-track,
+.print-variants-table-wrap::-webkit-scrollbar-track {
+  background: #faf8f3;
 }
 
-.product-summary p{
-    margin-top:6px;
-    color:#6b7280;
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 800px) {
+  .print-dialog-overlay {
+    padding: 15px;
+  }
+
+  .print-dialog {
+    max-height: 94vh;
+  }
+
+  .print-dialog-header {
+    padding: 19px 20px;
+  }
+
+  .print-product-summary {
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+
+  .print-config-grid,
+  .print-variants-section {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .print-summary-grid {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .print-dialog-footer {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
 }
 
-.print-summary{
-    display:flex;
-    justify-content:space-between;
-    margin-top:20px;
-    font-size:15px;
-    color:#374151;
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  .print-dialog-overlay {
+    align-items: center;
+    padding: 9px;
+  }
+
+  .print-dialog {
+    max-height: 96vh;
+    border-radius: 15px;
+  }
+
+  .print-dialog-header {
+    padding: 16px;
+  }
+
+  .print-dialog-heading {
+    gap: 10px;
+  }
+
+  .print-dialog-heading-icon {
+    width: 41px;
+    height: 41px;
+    border-radius: 12px;
+  }
+
+  .print-dialog-header h2 {
+    font-size: 20px;
+  }
+
+  .print-dialog-heading p {
+    font-size: 9px;
+  }
+
+  .print-product-summary {
+    padding: 13px;
+    margin: 14px 14px 0;
+  }
+
+  .print-product-status {
+    padding: 6px 8px;
+    font-size: 9px;
+  }
+
+  .print-config-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+    padding: 16px 14px 0;
+  }
+
+  .print-variants-section {
+    padding: 19px 14px 0;
+  }
+
+  .print-section-heading h3 {
+    font-size: 16px;
+  }
+
+  .print-summary-grid {
+    padding: 15px 14px 17px;
+  }
+
+  .print-summary-card {
+    gap: 8px;
+    padding: 11px;
+  }
+
+  .print-summary-icon {
+    width: 33px;
+    height: 33px;
+  }
+
+  .print-summary-card strong {
+    font-size: 19px;
+  }
+
+  .print-dialog-footer {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 13px 14px;
+  }
+
+  .print-footer-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .print-dialog-submit {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .print-dialog-reset,
+  .print-dialog-cancel {
+    width: 100%;
+  }
 }
 
-.reset-btn{
-    height:46px;
-    min-width:120px;
-    border:none;
-    border-radius:12px;
-    background:#fbbf24;
-    color:#111827;
-    font-weight:600;
-    cursor:pointer;
-    transition:.2s;
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 370px) {
+  .print-product-status {
+    display: none;
+  }
+
+  .print-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .print-dialog-header h2 {
+    font-size: 18px;
+  }
+
+  .print-dialog-close {
+    width: 33px;
+    height: 33px;
+  }
 }
 
-.reset-btn:hover{
-    background:#f59e0b;
-}
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
 
-.print-btn:disabled{
-    opacity:.6;
-    cursor:not-allowed;
+@media (prefers-reduced-motion: reduce) {
+  .print-dialog-overlay,
+  .print-dialog,
+  .print-dialog * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

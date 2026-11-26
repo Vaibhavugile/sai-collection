@@ -1,4 +1,7 @@
+
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+
 import "./ProductCategory.css";
 
 import {
@@ -8,15 +11,23 @@ import {
 import {
   subscribeSubCategories,
 } from "../../../services/subCategoryService";
-import { useLocation } from "react-router-dom";
+
+import {
+  CategoryOutlined,
+  AccountTreeOutlined,
+  KeyboardArrowDownRounded,
+  CheckCircleOutlineRounded,
+  VisibilityOutlined,
+} from "@mui/icons-material";
+
 export default function ProductCategory({
   product,
   setProduct,
 }) {
   const location = useLocation();
 
-const isView =
-  location.pathname.startsWith("/products/view");
+  const isView = location.pathname.startsWith("/products/view");
+
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
 
@@ -26,10 +37,14 @@ const isView =
 
   useEffect(() => {
     const unsubscribe = subscribeCategories((data) => {
-      setCategories(data);
+      setCategories(Array.isArray(data) ? data : []);
     });
 
-    return () => unsubscribe();
+    return () => {
+      if (typeof unsubscribe === "function") {
+        unsubscribe();
+      }
+    };
   }, []);
 
   /* ===========================================
@@ -37,158 +52,261 @@ const isView =
   =========================================== */
 
   useEffect(() => {
-    const unsubscribe =
-      subscribeSubCategories((data) => {
-        setSubCategories(data);
-      });
+    const unsubscribe = subscribeSubCategories((data) => {
+      setSubCategories(Array.isArray(data) ? data : []);
+    });
 
-    return () => unsubscribe();
+    return () => {
+      if (typeof unsubscribe === "function") {
+        unsubscribe();
+      }
+    };
   }, []);
 
   /* ===========================================
-      FILTER SUB CATEGORY
+      FILTER SUB CATEGORIES
   =========================================== */
 
-  const filteredSubCategories =
-    subCategories.filter(
-      (item) =>
-        item.categoryId === product.categoryId
-    );
+  const filteredSubCategories = subCategories.filter(
+    (item) =>
+      String(item.categoryId) === String(product?.categoryId)
+  );
 
   /* ===========================================
       CATEGORY CHANGE
   =========================================== */
 
-  const handleCategory = (e) => {
-      if (isView) return;
-    const id = e.target.value;
+  const handleCategory = (event) => {
+    if (isView) return;
+
+    const id = event.target.value;
 
     const selected = categories.find(
-      (c) => c.id === id
+      (category) => String(category.id) === String(id)
     );
 
-    setProduct((prev) => ({
-      ...prev,
+    setProduct((previous) => ({
+      ...previous,
 
       categoryId: selected?.id || "",
+      categoryName: selected?.name || "",
 
-      categoryName:
-        selected?.name || "",
-
+      // Reset subcategory when category changes
       subCategoryId: "",
-
       subCategoryName: "",
     }));
   };
 
   /* ===========================================
-      SUB CATEGORY CHANGE
+      SUBCATEGORY CHANGE
   =========================================== */
 
-  const handleSubCategory = (e) => {
-      if (isView) return;
-    const id = e.target.value;
+  const handleSubCategory = (event) => {
+    if (isView) return;
 
-    const selected =
-      filteredSubCategories.find(
-        (c) => c.id === id
-      );
+    const id = event.target.value;
 
-    setProduct((prev) => ({
-      ...prev,
+    const selected = filteredSubCategories.find(
+      (category) => String(category.id) === String(id)
+    );
 
-      subCategoryId:
-        selected?.id || "",
+    setProduct((previous) => ({
+      ...previous,
 
-      subCategoryName:
-        selected?.name || "",
+      subCategoryId: selected?.id || "",
+      subCategoryName: selected?.name || "",
     }));
   };
 
   return (
-    <div className="product-card">
+    <section
+      className={`product-card product-category-card ${
+        isView ? "product-category-view-mode" : ""
+      }`}
+    >
 
-      <div className="product-card-header">
+      {/* HEADER */}
 
-        <h2>Product Category</h2>
+      <div className="product-card-header category-card-header">
 
-        <p>
-          Select the category and
-          sub category of this product.
-        </p>
+        <div className="category-heading">
 
-      </div>
-
-      <div className="product-card-body">
-
-        <div className="category-grid">
-
-          {/* Category */}
-
-          <div className="form-group">
-
-            <label>
-              Category
-            </label>
-
-            <select
-  value={product.categoryId}
-  onChange={handleCategory}
-  disabled={isView}
->
-              <option value="">
-                Select Category
-              </option>
-
-              {categories.map((item) => (
-                <option
-                  key={item.id}
-                  value={item.id}
-                >
-                  {item.name}
-                </option>
-              ))}
-
-            </select>
-
+          <div className="category-heading-icon">
+            <CategoryOutlined />
           </div>
 
-          {/* Sub Category */}
+          <div className="category-heading-content">
 
-          <div className="form-group">
+            <span className="category-eyebrow">
+              PRODUCT CLASSIFICATION
+            </span>
 
-            <label>
-              Sub Category
-            </label>
+            <h2>Product Category</h2>
 
-            <select
-  value={product.subCategoryId}
-  onChange={handleSubCategory}
-  disabled={isView || !product.categoryId}
->
-              <option value="">
-                Select Sub Category
-              </option>
-
-              {filteredSubCategories.map(
-                (item) => (
-                  <option
-                    key={item.id}
-                    value={item.id}
-                  >
-                    {item.name}
-                  </option>
-                )
-              )}
-
-            </select>
+            <p>
+              Organize your product by selecting its category and subcategory.
+            </p>
 
           </div>
 
         </div>
 
+        <div className={`category-mode-indicator ${isView ? "view" : "edit"}`}>
+          {isView ? (
+            <VisibilityOutlined />
+          ) : (
+            <CheckCircleOutlineRounded />
+          )}
+
+          <span>{isView ? "View Mode" : "Classification"}</span>
+        </div>
+
       </div>
 
-    </div>
+      {/* BODY */}
+
+      <div className="product-card-body category-card-body">
+
+        <div className="category-grid">
+
+          {/* CATEGORY */}
+
+          <div className="category-field">
+
+            <label htmlFor="product-category">
+              <span>Category</span>
+              <span className="category-required">*</span>
+            </label>
+
+            <div className="category-select-wrapper">
+
+              <div className="category-select-icon">
+                <CategoryOutlined />
+              </div>
+
+              <select
+                id="product-category"
+                value={product?.categoryId || ""}
+                onChange={handleCategory}
+                disabled={isView}
+                required
+              >
+                <option value="">
+                  {categories.length
+                    ? "Select a category"
+                    : "Loading categories..."}
+                </option>
+
+                {categories.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+
+              </select>
+
+              <KeyboardArrowDownRounded className="category-select-arrow" />
+
+            </div>
+
+            <div className="category-field-help">
+              Choose the main product category.
+            </div>
+
+          </div>
+
+          {/* SUBCATEGORY */}
+
+          <div className="category-field">
+
+            <label htmlFor="product-subcategory">
+              <span>Sub Category</span>
+              <span className="category-required">*</span>
+            </label>
+
+            <div className={`category-select-wrapper ${
+              !product?.categoryId ? "is-disabled" : ""
+            }`}>
+
+              <div className="category-select-icon">
+                <AccountTreeOutlined />
+              </div>
+
+              <select
+                id="product-subcategory"
+                value={product?.subCategoryId || ""}
+                onChange={handleSubCategory}
+                disabled={isView || !product?.categoryId}
+                required
+              >
+                <option value="">
+                  {!product?.categoryId
+                    ? "Select category first"
+                    : filteredSubCategories.length
+                    ? "Select a subcategory"
+                    : "No subcategories available"}
+                </option>
+
+                {filteredSubCategories.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+
+              </select>
+
+              <KeyboardArrowDownRounded className="category-select-arrow" />
+
+            </div>
+
+            <div className="category-field-help">
+              Choose a subcategory belonging to the selected category.
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* SELECTION SUMMARY */}
+
+        <div className="category-selection-summary">
+
+          <div className="category-summary-icon">
+            <CheckCircleOutlineRounded />
+          </div>
+
+          <div className="category-summary-content">
+
+            <strong>
+              {product?.categoryName && product?.subCategoryName
+                ? "Classification complete"
+                : product?.categoryName
+                ? "Category selected"
+                : "Classification pending"}
+            </strong>
+
+            <p>
+              {product?.categoryName
+                ? `${product.categoryName}${
+                    product.subCategoryName
+                      ? ` / ${product.subCategoryName}`
+                      : ""
+                  }`
+                : "Select a category and subcategory for your product."}
+            </p>
+
+          </div>
+
+          {product?.categoryName && product?.subCategoryName && (
+            <span className="category-summary-check">
+              <CheckCircleOutlineRounded />
+            </span>
+          )}
+
+        </div>
+
+      </div>
+
+    </section>
   );
 }

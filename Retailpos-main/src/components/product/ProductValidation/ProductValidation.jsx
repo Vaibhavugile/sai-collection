@@ -1,99 +1,102 @@
+
 import "./ProductValidation.css";
 
-export default function ProductValidation({
-  product,
-}) {
+export default function ProductValidation({ product = {} }) {
+  const variants = product.variants || [];
+
   const checks = [
     {
       label: "Product Code",
-      valid: product.productCode.trim() !== "",
+      valid: Boolean(product.productCode?.trim()),
     },
     {
       label: "Product Name",
-      valid: product.name.trim() !== "",
+      valid: Boolean(product.name?.trim()),
     },
-   
     {
       label: "Category",
-      valid: product.categoryId !== "",
+      valid: Boolean(product.categoryId),
     },
     {
       label: "Sub Category",
-      valid: product.subCategoryId !== "",
+      valid: Boolean(product.subCategoryId),
     },
     {
-      label: "Variants Generated",
-      valid: product.variants.length > 0,
+      label: "Variants",
+      valid: variants.length > 0,
     },
     {
       label: "Purchase Price",
       valid:
-        product.variants.length > 0 &&
-        product.variants.every(
-          (v) => Number(v.purchasePrice) >= 0
+        variants.length > 0 &&
+        variants.every(
+          (v) =>
+            v.purchasePrice !== "" &&
+            v.purchasePrice !== null &&
+            Number.isFinite(Number(v.purchasePrice)) &&
+            Number(v.purchasePrice) >= 0
         ),
     },
     {
       label: "Selling Price",
       valid:
-        product.variants.length > 0 &&
-        product.variants.every(
-          (v) => Number(v.sellingPrice) > 0
+        variants.length > 0 &&
+        variants.every(
+          (v) =>
+            v.sellingPrice !== "" &&
+            v.sellingPrice !== null &&
+            Number.isFinite(Number(v.sellingPrice)) &&
+            Number(v.sellingPrice) > 0
         ),
     },
     {
       label: "Stock",
       valid:
-        product.variants.length > 0 &&
-        product.variants.every(
-          (v) => Number(v.stock) >= 0
+        variants.length > 0 &&
+        variants.every(
+          (v) =>
+            v.stock !== "" &&
+            v.stock !== null &&
+            Number.isFinite(Number(v.stock)) &&
+            Number(v.stock) >= 0
         ),
     },
   ];
 
-  const completed = checks.filter(
-    (item) => item.valid
-  ).length;
-
+  const completed = checks.filter((item) => item.valid).length;
   const pending = checks.length - completed;
+  const ready = pending === 0;
 
   return (
-    <div className="product-card">
-      <div className="product-card-header">
-        <h2>Product Validation</h2>
+    <div className="product-validation">
+      <div className="validation-top">
+        <div className="validation-title">
+          <h3>Product Validation</h3>
+          <span>{completed}/{checks.length} Completed</span>
+        </div>
 
-        <p>
-          Verify all required information before
-          saving the product.
-        </p>
+        <span className={`validation-result ${ready ? "ready" : "pending"}`}>
+          {ready ? "✓ Ready to Save" : `${pending} Remaining`}
+        </span>
+      </div>
+
+      <div className="validation-progress">
+        <div
+          className={ready ? "complete" : ""}
+          style={{ width: `${(completed / checks.length) * 100}%` }}
+        />
       </div>
 
       <div className="validation-list">
         {checks.map((item) => (
           <div
             key={item.label}
-            className={`validation-chip ${
-              item.valid ? "success" : "error"
-            }`}
+            className={`validation-chip ${item.valid ? "success" : "error"}`}
           >
-            <span className="chip-icon">
-              {item.valid ? "✓" : "✕"}
-            </span>
-
-            <span>{item.label}</span>
+            <span>{item.valid ? "✓" : "✕"}</span>
+            {item.label}
           </div>
         ))}
-      </div>
-
-      <div className="validation-footer">
-        {pending === 0 ? (
-          <>✅ Ready to Save Product</>
-        ) : (
-          <>
-            {completed}/{checks.length} Completed •{" "}
-            {pending} Remaining
-          </>
-        )}
       </div>
     </div>
   );

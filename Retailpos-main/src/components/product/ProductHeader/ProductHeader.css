@@ -1,135 +1,577 @@
-.product-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:40px;
 
-    padding:35px;
+/* =========================================================
+   SAI COLLECTION
+   PREMIUM PRODUCT HEADER
+   Champagne Gold / Ivory Theme
+========================================================= */
 
-    background:#fff;
+.product-header {
+  --header-gold: #b49359;
+  --header-gold-dark: #92713b;
+  --header-ink: #302d25;
+  --header-muted: #918979;
 
-    border-radius:24px;
+  position: relative;
 
-    border:1px solid #edf1f7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 35px;
 
-    box-shadow:0 15px 40px rgba(15,23,42,.05);
+  width: 100%;
 
-    margin-bottom:30px;
-}
+  padding: 29px 31px;
+  margin-bottom: 25px;
 
-.product-header-left{
-    flex:1;
-}
+  overflow: hidden;
 
-.back-btn{
+  border: 1px solid #ece5d8;
+  border-radius: 17px;
 
-    border:none;
-
-    background:#eef2ff;
-
-    color:#5b5fef;
-
-    padding:10px 18px;
-
-    border-radius:12px;
-
-    cursor:pointer;
-
-    font-size:14px;
-
-    font-weight:600;
-
-    transition:.3s;
-}
-
-.back-btn:hover{
-
-    background:#dfe5ff;
-
-}
-
-.product-header h1{
-
-    margin-top:20px;
-
-    font-size:38px;
-
-    font-weight:800;
-
-    color:#111827;
-}
-
-.product-header p{
-
-    margin-top:10px;
-
-    max-width:600px;
-
-    color:#6b7280;
-
-    line-height:1.7;
-
-    font-size:15px;
-}
-
-.product-code-card{
-
-    width:220px;
-
-    background:linear-gradient(
-        135deg,
-        #5b5fef,
-        #7c3aed
+  background:
+    radial-gradient(
+      circle at 80% 0%,
+      rgba(193, 164, 108, 0.10),
+      transparent 32%
+    ),
+    linear-gradient(
+      135deg,
+      #fffefa,
+      #ffffff 60%,
+      #faf7f0
     );
 
-    color:#fff;
+  box-shadow:
+    0 6px 24px rgba(54, 43, 22, 0.035),
+    0 1px 3px rgba(54, 43, 22, 0.025);
 
-    border-radius:20px;
-
-    padding:24px;
-
-    text-align:center;
-
-    box-shadow:
-        0 20px 40px
-        rgba(91,95,239,.25);
+  animation: productHeaderIn 0.45s ease both;
 }
 
-.product-code-label{
+@keyframes productHeaderIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
 
-    display:block;
-
-    opacity:.85;
-
-    font-size:13px;
-
-    letter-spacing:.08em;
-
-    text-transform:uppercase;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.product-code-card h2{
+/* =========================================================
+   DECORATIVE BACKGROUND
+========================================================= */
 
-    margin-top:12px;
+.product-header-decoration {
+  position: absolute;
+  inset: 0;
 
-    font-size:28px;
+  overflow: hidden;
 
-    font-weight:800;
-
-    letter-spacing:.05em;
+  pointer-events: none;
 }
 
-@media(max-width:900px){
+.product-header-orb {
+  position: absolute;
 
-.product-header{
+  display: block;
 
-    flex-direction:column;
+  border-radius: 50%;
 
-    align-items:flex-start;
+  pointer-events: none;
 }
 
-.product-code-card{
+.product-header-orb.orb-one {
+  width: 240px;
+  height: 240px;
 
-    width:100%;
+  top: -155px;
+  right: 190px;
+
+  border: 1px solid rgba(180, 147, 89, 0.11);
 }
+
+.product-header-orb.orb-two {
+  width: 160px;
+  height: 160px;
+
+  right: 250px;
+  bottom: -125px;
+
+  border: 1px solid rgba(180, 147, 89, 0.10);
+}
+
+/* =========================================================
+   LEFT CONTENT
+========================================================= */
+
+.product-header-left {
+  position: relative;
+  z-index: 1;
+
+  min-width: 0;
+  flex: 1;
+}
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.product-header-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  height: 33px;
+
+  padding: 0 11px;
+  margin-bottom: 20px;
+
+  border: 1px solid #eee6d7;
+  border-radius: 8px;
+
+  background: #fff;
+
+  color: #82704f;
+
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+
+  transition: all 0.22s ease;
+}
+
+.product-header-back svg {
+  font-size: 16px;
+  transition: transform 0.22s ease;
+}
+
+.product-header-back:hover {
+  border-color: #c8ad79;
+  background: #fbf7ee;
+  color: #92713b;
+}
+
+.product-header-back:hover svg {
+  transform: translateX(-3px);
+}
+
+/* =========================================================
+   TITLE ROW
+========================================================= */
+
+.product-header-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.product-header-icon {
+  width: 51px;
+  height: 51px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid #e9ddc7;
+  border-radius: 14px;
+
+  background: linear-gradient(
+    145deg,
+    #f8f1e4,
+    #eee2cb
+  );
+
+  color: #9b7b42;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 3px 8px rgba(130, 100, 45, 0.05);
+}
+
+.product-header-icon svg {
+  font-size: 26px;
+}
+
+/* =========================================================
+   TITLE TEXT
+========================================================= */
+
+.product-header-title-content {
+  min-width: 0;
+}
+
+.product-header-eyebrow {
+  display: block;
+
+  margin-bottom: 6px;
+
+  color: #a1844f;
+
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.55px;
+}
+
+.product-header-title-content h1 {
+  margin: 0;
+
+  color: var(--header-ink);
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 29px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.6px;
+}
+
+.product-header-title-content p {
+  max-width: 590px;
+
+  margin: 8px 0 0;
+
+  color: var(--header-muted);
+
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   FEATURE LABELS
+========================================================= */
+
+.product-header-features {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  margin-top: 19px;
+  padding-left: 66px;
+}
+
+.product-header-features span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  color: #85775d;
+
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.product-header-features span svg {
+  color: #b49359;
+  font-size: 15px;
+}
+
+.product-header-features i {
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+
+  background: #c9b58e;
+}
+
+/* =========================================================
+   PRODUCT CODE CARD
+========================================================= */
+
+.product-code-card {
+  position: relative;
+  z-index: 1;
+
+  width: 235px;
+  min-width: 235px;
+
+  padding: 17px;
+
+  overflow: hidden;
+
+  border: 1px solid #e8dcc6;
+  border-radius: 13px;
+
+  background: linear-gradient(
+    145deg,
+    #fffdf8,
+    #f7f0e3
+  );
+
+  box-shadow:
+    0 7px 19px rgba(105, 79, 36, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.product-code-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 11px 25px rgba(105, 79, 36, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* =========================================================
+   CODE CARD TOP
+========================================================= */
+
+.product-code-card-top {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding-bottom: 13px;
+
+  border-bottom: 1px solid #eadfca;
+}
+
+.product-code-icon {
+  width: 29px;
+  height: 29px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: #eee3cd;
+  color: #92713b;
+}
+
+.product-code-icon svg {
+  font-size: 17px;
+}
+
+.product-code-card-top > span {
+  color: #9c855b;
+
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+}
+
+/* =========================================================
+   CODE CONTENT
+========================================================= */
+
+.product-code-content {
+  position: relative;
+  z-index: 1;
+
+  padding-top: 13px;
+}
+
+.product-code-label {
+  display: block;
+
+  color: #91846d;
+
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.product-code-content h2 {
+  margin: 7px 0 0;
+
+  overflow-wrap: anywhere;
+
+  color: #403729;
+
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  line-height: 1.3;
+}
+
+/* =========================================================
+   CODE DIVIDER
+========================================================= */
+
+.product-code-divider {
+  height: 1px;
+
+  margin: 13px 0;
+
+  background: linear-gradient(
+    90deg,
+    #e6d8bc,
+    transparent
+  );
+}
+
+/* =========================================================
+   CODE FOOTER
+========================================================= */
+
+.product-code-footer {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.product-code-status-dot {
+  width: 7px;
+  height: 7px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #83a16e;
+
+  box-shadow: 0 0 0 3px rgba(131, 161, 110, 0.13);
+}
+
+.product-code-footer small {
+  color: #8e856f;
+
+  font-size: 9px;
+  font-weight: 550;
+}
+
+/* =========================================================
+   WATERMARK
+========================================================= */
+
+.product-code-watermark {
+  position: absolute;
+
+  right: -15px;
+  bottom: -24px;
+
+  color: rgba(180, 147, 89, 0.08);
+
+  transform: rotate(-20deg);
+}
+
+.product-code-watermark svg {
+  font-size: 110px;
+}
+
+/* =========================================================
+   RESPONSIVE TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+  .product-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 23px;
+
+    padding: 25px;
+  }
+
+  .product-code-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .product-header-title-content p {
+    max-width: 100%;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  .product-header {
+    padding: 19px;
+    margin-bottom: 18px;
+
+    border-radius: 14px;
+  }
+
+  .product-header-back {
+    margin-bottom: 16px;
+  }
+
+  .product-header-title-row {
+    gap: 11px;
+  }
+
+  .product-header-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+  }
+
+  .product-header-icon svg {
+    font-size: 22px;
+  }
+
+  .product-header-title-content h1 {
+    font-size: 23px;
+  }
+
+  .product-header-title-content p {
+    font-size: 10px;
+  }
+
+  .product-header-features {
+    gap: 9px;
+    padding-left: 53px;
+    margin-top: 15px;
+  }
+
+  .product-header-features span {
+    font-size: 8px;
+  }
+
+  .product-code-card {
+    padding: 14px;
+  }
+
+  .product-code-content h2 {
+    font-size: 19px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 370px) {
+  .product-header-title-content h1 {
+    font-size: 20px;
+  }
+
+  .product-header-features {
+    padding-left: 0;
+  }
+
+  .product-header-features span {
+    font-size: 8px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .product-header,
+  .product-header * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

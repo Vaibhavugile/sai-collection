@@ -28,12 +28,12 @@ import Categories from "../pages/Categories/Categories";
 import SubCategories from "../pages/Subcategories/SubCategories";
 import AddProduct from "../pages/Products/AddProduct";
 import ViewProduct from "../pages/Products/ViewProduct";
-
+import EditProduct from "../pages/Products/EditProduct";
 import InventoryDashboard from "../pages/Inventory/InventoryDashboard";
 import BillingDashboard from "../pages/Billing/BillingDashboard";
 import OrdersDashboard from "../pages/Orders/OrdersDashboard";
 import FinanceDashboard from "../pages/Finance/FinanceDashboard";
-
+import ProductEditHistory from "../pages/Products/ProductEditHistory";
 
 export default function AppRoutes() {
   return (
@@ -94,7 +94,11 @@ export default function AppRoutes() {
               path="/products/view/:id"
               element={<ViewProduct />}
             />
-
+<Route
+  path="/products/edit/:id"
+  element={<EditProduct />}
+/>
+<Route path="/products/:id/history" element={<ProductEditHistory />} />
             <Route
               path="/addproduct"
               element={<AddProduct />}

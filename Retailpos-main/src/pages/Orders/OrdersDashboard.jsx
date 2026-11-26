@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+
+import { useCallback, useEffect, useState } from "react";
 import "./OrdersDashboard.css";
 
 import {
@@ -10,352 +11,209 @@ import {
 import OrderSummary from "./OrderSummary";
 import OrderFilters from "./OrderFilters";
 import OrdersTable from "./OrdersTable";
-import OrderDetailsDrawer from "./OrderDetailsDrawer";
+import OrderDetailsPage from "./OrderDetailsPage";
+
+const INITIAL_FILTERS = {
+  search: "",
+  payment: "all",
+  status: "all",
+  dateFilter: "today",
+  custom: {},
+};
 
 export default function OrdersDashboard() {
-
   const [orders, setOrders] = useState([]);
-
   const [summary, setSummary] = useState(null);
-
   const [loading, setLoading] = useState(true);
-
   const [loadingMore, setLoadingMore] = useState(false);
-
+  const [error, setError] = useState("");
   const [lastDoc, setLastDoc] = useState(null);
-
   const [hasMore, setHasMore] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [filters, setFilters] = useState(INITIAL_FILTERS);
 
-  const [selectedOrder, setSelectedOrder] =
-    useState(null);
-
-  const [filters, setFilters] = useState({
-
-    search: "",
-
-    payment: "all",
-
-    status: "all",
-
-    dateFilter: "today",
-
-    custom: {},
-
-  });
-
-  /*
-  ======================================
-  LOAD DASHBOARD
-  ======================================
-  */
-
-  const loadDashboard = async () => {
+  const loadDashboard = useCallback(async () => {
+    setLoading(true);
+    setError("");
 
     try {
-
-      setLoading(true);
-
-      /*
-      Search Mode
-      */
-
       if (filters.search.trim()) {
+        const result = await searchOrders(filters.search.trim());
 
-        const result =
-          await searchOrders(filters.search);
-
-        setOrders(result);
-
+        setOrders(Array.isArray(result) ? result : []);
         setSummary(null);
-
         setHasMore(false);
-
         setLastDoc(null);
-
         return;
-
       }
 
-      /*
-      Load Summary & Orders Together
-      */
-
-      const [
-
-        summaryResult,
-
-        ordersResult,
-
-      ] = await Promise.all([
-
+      const [summaryResult, ordersResult] = await Promise.all([
         getSummary({
-
-          dateFilter:
-            filters.dateFilter,
-
-          custom:
-            filters.custom,
-
+          dateFilter: filters.dateFilter,
+          custom: filters.custom,
         }),
-
         getOrders({
-
-          dateFilter:
-            filters.dateFilter,
-
-          custom:
-            filters.custom,
-
-          payment:
-            filters.payment,
-
-          status:
-            filters.status,
-
+          dateFilter: filters.dateFilter,
+          custom: filters.custom,
+          payment: filters.payment,
+          status: filters.status,
           pageSize: 20,
-
         }),
-
       ]);
 
-      setSummary(summaryResult);
-
-      setOrders(ordersResult.orders);
-
-      setLastDoc(
-        ordersResult.lastDoc
-      );
-
-      setHasMore(
-        ordersResult.hasMore
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
+      setSummary(summaryResult || null);
+      setOrders(ordersResult?.orders || []);
+      setLastDoc(ordersResult?.lastDoc || null);
+      setHasMore(Boolean(ordersResult?.hasMore));
+    } catch (err) {
+      console.error("Unable to load orders:", err);
+      setError("We couldn't load your orders. Please try again.");
+      setOrders([]);
+      setHasMore(false);
     } finally {
-
       setLoading(false);
-
     }
-
-  };
-
-  /*
-  ======================================
-  INITIAL LOAD
-  ======================================
-  */
-
-  useEffect(() => {
-
-    loadDashboard();
-
   }, [
-
     filters.search,
-
     filters.payment,
-
     filters.status,
-
     filters.dateFilter,
-
     filters.custom,
-
   ]);
 
-  /*
-  ======================================
-  LOAD MORE
-  ======================================
-  */
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
 
-  const handleLoadMore =
-    async () => {
+  const handleLoadMore = async () => {
+    if (
+      !hasMore ||
+      loadingMore ||
+      loading ||
+      filters.search.trim() ||
+      !lastDoc
+    ) {
+      return;
+    }
 
-      if (
-        !hasMore ||
-        loadingMore ||
-        filters.search
-      ) {
+    try {
+      setLoadingMore(true);
 
-        return;
+      const result = await getOrders({
+        dateFilter: filters.dateFilter,
+        custom: filters.custom,
+        payment: filters.payment,
+        status: filters.status,
+        pageSize: 20,
+        lastDoc,
+      });
 
-      }
+      setOrders((prev) => [
+        ...prev,
+        ...(result?.orders || []),
+      ]);
 
-      try {
-
-        setLoadingMore(true);
-
-        const result =
-          await getOrders({
-
-            dateFilter:
-              filters.dateFilter,
-
-            custom:
-              filters.custom,
-
-            payment:
-              filters.payment,
-
-            status:
-              filters.status,
-
-            pageSize: 20,
-
-            lastDoc,
-
-          });
-
-        setOrders(prev => [
-
-          ...prev,
-
-          ...result.orders,
-
-        ]);
-
-        setLastDoc(
-          result.lastDoc
-        );
-
-        setHasMore(
-          result.hasMore
-        );
-
-      } catch (error) {
-
-        console.error(error);
-
-      } finally {
-
-        setLoadingMore(false);
-
-      }
-
-    };
-
-  /*
-  ======================================
-  PRINT
-  ======================================
-  */
+      setLastDoc(result?.lastDoc || null);
+      setHasMore(Boolean(result?.hasMore));
+    } catch (err) {
+      console.error("Unable to load more orders:", err);
+      setError("Unable to load more orders. Please try again.");
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   const handlePrint = (order) => {
-
-    console.log(
-      "Print Invoice",
-      order
-    );
-
+    console.log("Print Invoice", order);
   };
-
-  /*
-  ======================================
-  PDF
-  ======================================
-  */
 
   const handleDownloadPDF = (order) => {
-
-    console.log(
-      "Download PDF",
-      order
-    );
-
+    console.log("Download PDF", order);
   };
 
+  // FULL PAGE ORDER DETAILS
+  if (selectedOrder) {
+    return (
+      <OrderDetailsPage
+        order={selectedOrder}
+        onBack={() => setSelectedOrder(null)}
+        onPrint={handlePrint}
+        onDownloadPDF={handleDownloadPDF}
+      />
+    );
+  }
+
+  // ORDERS DASHBOARD
   return (
+    <main className="orders-page">
+      <header className="orders-page-header">
+        <div>
+          <span className="orders-page-eyebrow">
+            SAI COLLECTION · LATUR
+          </span>
 
-    <div className="orders-page">
+          <h1>Orders</h1>
 
-      <OrderSummary
-
-        summary={summary}
-
-      />
-
-      <OrderFilters
-
-        filters={filters}
-
-        setFilters={setFilters}
-
-      />
-
-      <OrdersTable
-
-        orders={orders}
-
-        loading={loading}
-
-        onViewOrder={
-          setSelectedOrder
-        }
-
-        onPrint={
-          handlePrint
-        }
-
-      />
-
-      {hasMore && (
-
-        <div className="load-more">
-
-          <button
-
-            onClick={
-              handleLoadMore
-            }
-
-            disabled={
-              loadingMore
-            }
-
-          >
-
-            {
-
-              loadingMore
-
-                ? "Loading..."
-
-                : "Load More"
-
-            }
-
-          </button>
-
+          <p>
+            Track sales, review invoices and monitor payment performance.
+          </p>
         </div>
 
+        <div className="orders-page-date">
+          <span>ORDERS OVERVIEW</span>
+
+          <strong>
+            {new Date().toLocaleDateString("en-IN", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })}
+          </strong>
+        </div>
+      </header>
+
+      {!filters.search.trim() && (
+        <OrderSummary summary={summary} />
       )}
 
-      <OrderDetailsDrawer
-
-        order={
-          selectedOrder
-        }
-
-        onClose={() =>
-          setSelectedOrder(null)
-        }
-
-        onPrint={
-          handlePrint
-        }
-
-        onDownloadPDF={
-          handleDownloadPDF
-        }
-
+      <OrderFilters
+        filters={filters}
+        setFilters={setFilters}
       />
 
-    </div>
+      {error && (
+        <div className="orders-error" role="alert">
+          <span>{error}</span>
 
+          <button
+            type="button"
+            onClick={loadDashboard}
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      <OrdersTable
+        orders={orders}
+        loading={loading}
+        onViewOrder={setSelectedOrder}
+        onPrint={handlePrint}
+      />
+
+      {hasMore && !loading && (
+        <div className="orders-load-more">
+          <button
+            type="button"
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+          >
+            {loadingMore
+              ? "Loading orders..."
+              : "Load More Orders"}
+          </button>
+        </div>
+      )}
+    </main>
   );
-
 }

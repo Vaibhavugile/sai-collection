@@ -1,0 +1,363 @@
+
+.edit-product-page {
+  padding: 28px;
+  color: #29251f;
+  background: #f8f7f4;
+  min-height: 100vh;
+}
+
+.edit-product-header {
+  margin-bottom: 28px;
+}
+
+.edit-back-button {
+  border: 0;
+  background: transparent;
+  color: #887044;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 22px;
+}
+
+.edit-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.edit-eyebrow,
+.edit-product-code span,
+.edit-sidebar-heading span,
+.edit-summary-card > span {
+  color: #a18a62;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.edit-heading-row h1 {
+  margin: 8px 0;
+  font-size: 32px;
+  font-weight: 800;
+  color: #28231c;
+}
+
+.edit-heading-row p {
+  margin: 0;
+  color: #858078;
+  font-size: 14px;
+}
+
+.edit-product-code {
+  min-width: 190px;
+  padding: 17px 20px;
+  background: #fff;
+  border: 1px solid #e9e2d6;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.edit-product-code strong {
+  font-size: 19px;
+  color: #4d402c;
+  letter-spacing: 1px;
+}
+
+.edit-product-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  align-items: start;
+  gap: 24px;
+}
+
+.edit-product-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.edit-product-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;
+  top: 20px;
+}
+
+.edit-sidebar-card {
+  background: #fff;
+  border: 1px solid #ebe6dd;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(50, 40, 25, 0.035);
+}
+
+.edit-sidebar-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.edit-sidebar-heading h3 {
+  margin: 6px 0 0;
+  font-size: 19px;
+  color: #332b20;
+}
+
+.edit-status-icon {
+  color: #b3945c !important;
+  font-size: 16px !important;
+}
+
+.edit-status-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 13px 11px;
+  border: 1px solid #eee9df;
+  border-radius: 12px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.edit-status-option:has(input:checked) {
+  border-color: #c7ad7c;
+  background: #fbf8f1;
+}
+
+.edit-status-option input {
+  margin-top: 3px;
+  accent-color: #a88a54;
+}
+
+.edit-status-option span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.edit-status-option strong {
+  font-size: 13px;
+  color: #393126;
+}
+
+.edit-status-option small {
+  font-size: 11px;
+  color: #8d877e;
+  line-height: 1.5;
+}
+
+.edit-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+
+.edit-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #777168;
+}
+
+.edit-summary-row strong {
+  color: #453a2b;
+  font-size: 15px;
+}
+
+.edit-product-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #ebe6dd;
+  border-radius: 16px;
+}
+
+.edit-cancel-button,
+.edit-save-button {
+  min-height: 46px;
+  padding: 0 22px;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.edit-cancel-button {
+  color: #655d52;
+  background: #fff;
+  border: 1px solid #e5dfd5;
+}
+
+.edit-cancel-button:hover {
+  background: #f8f6f2;
+}
+
+.edit-save-button {
+  color: #fff;
+  background: linear-gradient(135deg, #9d7d49, #74582e);
+  border: 0;
+  box-shadow: 0 7px 18px rgba(126, 96, 49, 0.18);
+}
+
+.edit-save-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(126, 96, 49, 0.25);
+}
+
+.edit-save-button:disabled,
+.edit-cancel-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.edit-button-spinner,
+.edit-product-spinner {
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  border: 2px solid rgba(255,255,255,.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: editSpin .7s linear infinite;
+  vertical-align: middle;
+}
+
+.edit-button-spinner {
+  margin-right: 9px;
+}
+
+.edit-product-loading,
+.edit-product-error {
+  min-height: 65vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 25px;
+}
+
+.edit-product-loading .edit-product-spinner {
+  width: 35px;
+  height: 35px;
+  border-color: #e5dccb;
+  border-top-color: #947342;
+  margin-bottom: 18px;
+}
+
+.edit-product-loading h3,
+.edit-product-error h2 {
+  color: #3b3328;
+  margin-bottom: 7px;
+}
+
+.edit-product-loading p,
+.edit-product-error p {
+  color: #888177;
+  font-size: 14px;
+}
+
+.edit-error-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff0ed;
+  color: #c34e3e;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.edit-product-error button {
+  margin-top: 15px;
+  border: 0;
+  background: #80643b;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.edit-inline-error {
+  margin-bottom: 20px;
+  padding: 13px 16px;
+  border: 1px solid #f0c9c2;
+  background: #fff5f3;
+  color: #a43e31;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+@keyframes editSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1100px) {
+  .edit-product-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-product-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 650px) {
+  .edit-product-page {
+    padding: 16px;
+  }
+
+  .edit-heading-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .edit-heading-row h1 {
+    font-size: 26px;
+  }
+
+  .edit-product-code {
+    width: 100%;
+  }
+
+  .edit-product-footer {
+    flex-direction: column-reverse;
+  }
+
+  .edit-cancel-button,
+  .edit-save-button {
+    width: 100%;
+  }
+}
+.edit-history-link {
+  display: block;
+  margin-top: 8px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #98783e;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.edit-history-link:hover {
+  text-decoration: underline;
+}

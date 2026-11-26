@@ -1,76 +1,155 @@
+
 import "./BasicInformation.css";
+
 import { useLocation } from "react-router-dom";
+
+import {
+  EditOutlined,
+  DescriptionOutlined,
+  Inventory2Outlined,
+  VisibilityOutlined,
+} from "@mui/icons-material";
+
 export default function BasicInformation({
   product,
   setProduct,
 }) {
   const location = useLocation();
 
-const isView =
-  location.pathname.startsWith("/products/view");
-  const handleChange = (e) => {
-  if (isView) return;
+  const isView = location.pathname.startsWith("/products/view");
 
-  const { name, value } = e.target;
+  const handleChange = (event) => {
+    if (isView) return;
 
-  setProduct((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-};
+    const { name, value } = event.target;
+
+    setProduct((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
 
   return (
-    <div className="product-card">
+    <section className={`product-card basic-info-card ${isView ? "basic-info-view-mode" : ""}`}>
 
-      <div className="product-card-header">
+      {/* HEADER */}
 
-        <h2>Basic Information</h2>
+      <div className="product-card-header basic-info-header">
 
-        <p>
-          Enter the basic details about your
-          product.
-        </p>
+        <div className="basic-info-heading">
+
+          <div className="basic-info-heading-icon">
+            <Inventory2Outlined />
+          </div>
+
+          <div>
+            <span className="basic-info-eyebrow">
+              PRODUCT DETAILS
+            </span>
+
+            <h2>Basic Information</h2>
+
+            <p>
+              Enter the essential details about your product.
+            </p>
+          </div>
+
+        </div>
+
+        <div className={`basic-info-mode ${isView ? "view" : "edit"}`}>
+          {isView ? <VisibilityOutlined /> : <EditOutlined />}
+
+          <span>{isView ? "View Mode" : "Editable"}</span>
+        </div>
 
       </div>
 
-      <div className="product-card-body">
+      {/* BODY */}
 
-        <div className="form-group">
+      <div className="product-card-body basic-info-body">
 
-          <label>
+        {/* PRODUCT NAME */}
+
+        <div className="form-group basic-info-field">
+
+          <label htmlFor="product-name">
             Product Name
+            <span className="basic-info-required">*</span>
           </label>
 
-          <input
-  type="text"
-  name="name"
-  placeholder="Enter product name"
-  value={product.name}
-  onChange={handleChange}
-  readOnly={isView}
-/>
+          <div className="basic-info-input-wrap">
+
+            <input
+              id="product-name"
+              type="text"
+              name="name"
+              placeholder="Enter product name"
+              value={product?.name || ""}
+              onChange={handleChange}
+              readOnly={isView}
+              maxLength={150}
+            />
+
+            {!isView && (
+              <span className="basic-info-field-icon">
+                <EditOutlined />
+              </span>
+            )}
+
+          </div>
+
+          <div className="basic-info-field-footer">
+            <span>A clear name makes products easier to identify.</span>
+
+            <span>
+              {(product?.name || "").length}/150
+            </span>
+          </div>
 
         </div>
 
-        <div className="form-group">
+        {/* DESCRIPTION */}
 
-          <label>
+        <div className="form-group basic-info-field">
+
+          <label htmlFor="product-description">
             Description
+            <span className="basic-info-optional">Optional</span>
           </label>
 
-          <textarea
-  rows="5"
-  name="description"
-  placeholder="Write product description..."
-  value={product.description}
-  onChange={handleChange}
-  readOnly={isView}
-/>
+          <div className="basic-info-textarea-wrap">
+
+            <textarea
+              id="product-description"
+              rows={5}
+              name="description"
+              placeholder="Write a detailed product description..."
+              value={product?.description || ""}
+              onChange={handleChange}
+              readOnly={isView}
+              maxLength={1000}
+            />
+
+            <div className="basic-info-textarea-icon">
+              <DescriptionOutlined />
+            </div>
+
+          </div>
+
+          <div className="basic-info-field-footer">
+            <span>
+              Add useful details to help identify this product.
+            </span>
+
+            <span>
+              {(product?.description || "").length}/1000
+            </span>
+          </div>
 
         </div>
 
       </div>
 
-    </div>
+    </section>
   );
 }

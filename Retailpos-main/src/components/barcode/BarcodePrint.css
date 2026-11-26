@@ -1,35 +1,374 @@
+
+/* =========================================================
+   SAI COLLECTION
+   PREMIUM BARCODE PRINT BUTTON + MODAL OVERLAY
+   Ivory / Champagne Gold Theme
+========================================================= */
+
+/* =========================================================
+   PRINT BARCODE BUTTON
+========================================================= */
+
 .print-barcode-btn {
+  position: relative;
+
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-start;
+  gap: 12px;
 
-  padding: 10px 18px;
+  min-width: 225px;
+  min-height: 61px;
 
-  border: none;
-  border-radius: 10px;
+  padding: 10px 15px;
 
-  background: #111827;
-  color: #ffffff;
+  overflow: hidden;
 
-  font-size: 14px;
-  font-weight: 600;
+  border: 1px solid #b99a61;
+  border-radius: 13px;
+
+  background: linear-gradient(
+    135deg,
+    #c5a66e,
+    #a9874e
+  );
+
+  color: #fff;
 
   cursor: pointer;
 
-  transition: all 0.2s ease;
+  font-family: inherit;
+  text-align: left;
+
+  box-shadow:
+    0 6px 16px rgba(157, 121, 56, 0.17),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease;
 }
 
-.print-barcode-btn:hover {
-  background: #000000;
-  transform: translateY(-1px);
+/* Shine animation */
+
+.print-barcode-btn::before {
+  position: absolute;
+  top: -70%;
+  left: -55%;
+
+  width: 35%;
+  height: 250%;
+
+  background: rgba(255, 255, 255, 0.15);
+
+  content: "";
+
+  transform: rotate(25deg);
+
+  transition: left 0.6s ease;
+
+  pointer-events: none;
 }
 
-.print-barcode-btn:active {
+.print-barcode-btn:hover::before {
+  left: 125%;
+}
+
+/* =========================================================
+   BUTTON ICON
+========================================================= */
+
+.print-barcode-btn-icon {
+  position: relative;
+  z-index: 1;
+
+  width: 39px;
+  height: 39px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.15);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+
+.print-barcode-btn-icon svg {
+  font-size: 22px;
+}
+
+.print-barcode-btn:hover .print-barcode-btn-icon {
+  background: rgba(255, 255, 255, 0.23);
+  transform: scale(1.06);
+}
+
+/* =========================================================
+   BUTTON TEXT
+========================================================= */
+
+.print-barcode-btn-text {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  flex: 1;
+
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.1px;
+}
+
+.print-barcode-btn-text small {
+  color: rgba(255, 255, 255, 0.77);
+
+  font-size: 9px;
+  font-weight: 450;
+}
+
+/* =========================================================
+   BUTTON ARROW
+========================================================= */
+
+.print-barcode-btn-arrow {
+  position: relative;
+  z-index: 1;
+
+  width: 27px;
+  height: 27px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.14);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+
+.print-barcode-btn-arrow svg {
+  font-size: 16px;
+}
+
+.print-barcode-btn:hover .print-barcode-btn-arrow {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateX(3px);
+}
+
+/* =========================================================
+   BUTTON HOVER
+========================================================= */
+
+.print-barcode-btn:hover:not(:disabled) {
+  border-color: #98753e;
+
+  background: linear-gradient(
+    135deg,
+    #b9985d,
+    #96723d
+  );
+
+  box-shadow:
+    0 9px 22px rgba(157, 121, 56, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  transform: translateY(-2px);
+}
+
+.print-barcode-btn:active:not(:disabled) {
   transform: translateY(0);
+
+  box-shadow:
+    0 3px 9px rgba(157, 121, 56, 0.16);
 }
+
+/* =========================================================
+   DISABLED BUTTON
+========================================================= */
 
 .print-barcode-btn:disabled {
-  opacity: 0.6;
+  border-color: #ded8cb;
+  background: #e8e4dc;
+  color: #aaa394;
+
   cursor: not-allowed;
+
+  box-shadow: none;
+}
+
+.print-barcode-btn:disabled .print-barcode-btn-icon,
+.print-barcode-btn:disabled .print-barcode-btn-arrow {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* =========================================================
+   FOCUS ACCESSIBILITY
+========================================================= */
+
+.print-barcode-btn:focus-visible {
+  outline: 3px solid rgba(180, 147, 89, 0.3);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   FULL SCREEN MODAL OVERLAY
+   Important: Modal is rendered using React Portal
+========================================================= */
+
+.print-dialog-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+
+  z-index: 999999 !important;
+
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  background: rgba(34, 30, 23, 0.58);
+
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+
+  animation: barcodeOverlayIn 0.22s ease both;
+}
+
+/* =========================================================
+   MODAL POSITION AND SIZE
+========================================================= */
+
+.print-dialog-overlay > .print-dialog {
+  position: relative !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  width: min(920px, 100%) !important;
+  max-width: 920px !important;
+
+  max-height: 90vh !important;
+  max-height: 90dvh !important;
+
+  min-height: 0;
+
+  flex: none !important;
+
+  margin: auto;
+
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+/* =========================================================
+   OVERLAY ANIMATION
+========================================================= */
+
+@keyframes barcodeOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE TABLET
+========================================================= */
+
+@media (max-width: 800px) {
+  .print-dialog-overlay {
+    padding: 15px;
+  }
+
+  .print-dialog-overlay > .print-dialog {
+    width: 100% !important;
+    max-height: 94vh !important;
+    max-height: 94dvh !important;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+  .print-barcode-btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .print-dialog-overlay {
+    align-items: center;
+
+    padding: 9px;
+  }
+
+  .print-dialog-overlay > .print-dialog {
+    width: 100% !important;
+
+    max-height: 96vh !important;
+    max-height: 96dvh !important;
+
+    border-radius: 15px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 370px) {
+  .print-barcode-btn {
+    min-height: 55px;
+    padding: 8px 11px;
+  }
+
+  .print-barcode-btn-icon {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .print-barcode-btn,
+  .print-barcode-btn *,
+  .print-dialog-overlay {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

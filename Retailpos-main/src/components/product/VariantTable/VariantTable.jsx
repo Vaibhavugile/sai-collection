@@ -1,406 +1,397 @@
+
 import "./VariantTable.css";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-export default function VariantTable({
-  product,
-  setProduct,
-}) {
 
-  /* ===========================================
-    UPDATE VARIANT
-=========================================== */
-const [bulk, setBulk] = useState({
-  purchasePrice: "",
-  sellingPrice: "",
-  stock: "",
-  lowStock: "",
-});
-const location = useLocation();
+import {
+  FiPackage,
+  FiTrash2,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiLayers,
+  FiDollarSign,
+  FiTrendingUp,
+  FiBox,
+  FiSliders,
+} from "react-icons/fi";
 
-const isView =
-  location.pathname.startsWith("/products/view");
-const updateVariant = (
-  index,
-  field,
-  value
-) => {
-  const variants = [...product.variants];
+export default function VariantTable({ product, setProduct }) {
+  const location = useLocation();
 
-  variants[index] = {
-    ...variants[index],
-    [field]: value,
+  const isView = location.pathname.startsWith("/products/view");
+
+  const [bulk, setBulk] = useState({
+    purchasePrice: "",
+    sellingPrice: "",
+    stock: "",
+    lowStock: "",
+  });
+
+  const variants = product?.variants || [];
+
+  const updateVariant = (index, field, value) => {
+    if (isView) return;
+
+    setProduct((prev) => ({
+      ...prev,
+      variants: (prev.variants || []).map((variant, i) =>
+        i === index
+          ? { ...variant, [field]: value }
+          : variant
+      ),
+    }));
   };
 
-  setProduct((prev) => ({
-    ...prev,
-    variants,
-  }));
-};
-/* ===========================================
-    DELETE VARIANT
-=========================================== */
+  const deleteVariant = (index) => {
+    if (isView) return;
 
-const deleteVariant = (index) => {
-if (isView) return;
-  const confirmed = window.confirm(
-    "Are you sure you want to delete this variant?"
+    const variant = variants[index];
+
+    const confirmed = window.confirm(
+      `Delete variant "${variant.variantName || "Unnamed"}"? This change will be saved when you update the product.`
+    );
+
+    if (!confirmed) return;
+
+    setProduct((prev) => ({
+      ...prev,
+      variants: (prev.variants || []).filter((_, i) => i !== index),
+    }));
+  };
+
+  const applyToAll = (field) => {
+    if (isView || bulk[field] === "") return;
+
+    const value = Number(bulk[field]);
+
+    if (!Number.isFinite(value) || value < 0) {
+      window.alert("Please enter a valid non-negative number.");
+      return;
+    }
+
+    setProduct((prev) => ({
+      ...prev,
+      variants: (prev.variants || []).map((variant) => ({
+        ...variant,
+        [field]: value,
+      })),
+    }));
+  };
+
+  const handleBulkChange = (field, value) => {
+    setBulk((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  if (variants.length === 0) return null;
+
+  const totalStock = variants.reduce(
+    (sum, variant) => sum + (Number(variant.stock) || 0),
+    0
   );
 
-  if (!confirmed) return;
+  const activeCount = variants.filter(
+    (variant) => variant.status !== false
+  ).length;
 
-  const variants = product.variants.filter(
-    (_, i) => i !== index
-  );
+  const inactiveCount = variants.length - activeCount;
 
-  setProduct((prev) => ({
-    ...prev,
-    variants,
-  }));
-
-};
-/* ===========================================
-    BULK UPDATE
-=========================================== */
-
-const applyToAll = (field) => {
-  if (isView) return;
-  if (bulk[field] === "") return;
-
-  const variants = product.variants.map((variant) => ({
-    ...variant,
-    [field]: Number(bulk[field]),
-  }));
-
-  setProduct((prev) => ({
-    ...prev,
-    variants,
-  }));
-};
-  if (
-    !product.variants ||
-    product.variants.length === 0
-  ) {
-    return null;
-  }
+  const bulkFields = [
+    {
+      field: "purchasePrice",
+      label: "Purchase Price",
+      icon: <FiDollarSign />,
+      prefix: "₹",
+    },
+    {
+      field: "sellingPrice",
+      label: "Selling Price",
+      icon: <FiTrendingUp />,
+      prefix: "₹",
+    },
+    {
+      field: "stock",
+      label: "Stock Quantity",
+      icon: <FiBox />,
+      prefix: "",
+    },
+    {
+      field: "lowStock",
+      label: "Low Stock Alert",
+      icon: <FiAlertCircle />,
+      prefix: "",
+    },
+  ];
 
   return (
-    <div className="product-card">
+    <section className="variant-table-section">
+      {/* HEADER */}
+      <div className="variant-table-heading">
+        <div className="variant-heading-left">
+          <div className="variant-heading-icon">
+            <FiLayers />
+          </div>
 
-      <div className="product-card-header">
-
-        <div>
-
-          <h2>
-            Generated Variants
-          </h2>
-
-          <p>
-            {product.variants.length} Variant
-            {product.variants.length > 1
-              ? "s"
-              : ""}{" "}
-            Generated
-          </p>
-
-        </div>
-
-      </div>
-  
-
-      <div className="variant-table-wrapper">
-
-        <table className="variant-table">
-
-          <thead>
-
-            <tr>
-
-              <th>Variant</th>
-
-              <th>Barcode</th>
-
-              <th>SKU</th>
-
-              <th>Purchase Price</th>
-
-              <th>Selling Price</th>
-
-              <th>Stock</th>
-
-              <th>Low Stock</th>
-
-              <th>Status</th>
-              <th>Actions</th>
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-  {product.variants.map(
-    (variant, index) => (
-
-      <tr key={variant.id}>
-
-        <td className="variant-name">
-          {variant.variantName}
-        </td>
-
-        <td>
-          {variant.barcode}
-        </td>
-
-        <td>
-          {variant.sku}
-        </td>
-
-        <td>
-
-          <input
-            type="number"
-            className="table-input"
-            value={variant.purchasePrice}
-              readOnly={isView}
-            onChange={(e) =>
-              updateVariant(
-                index,
-                "purchasePrice",
-                Number(e.target.value)
-              )
-            }
-          />
-
-        </td>
-
-        <td>
-
-          <input
-            type="number"
-            className="table-input"
-            value={variant.sellingPrice}
-              readOnly={isView}
-            onChange={(e) =>
-              updateVariant(
-                index,
-                "sellingPrice",
-                Number(e.target.value)
-              )
-            }
-          />
-
-        </td>
-
-        <td>
-
-          <input
-            type="number"
-            className="table-input"
-            value={variant.stock}
-              readOnly={isView}
-            onChange={(e) =>
-              updateVariant(
-                index,
-                "stock",
-                Number(e.target.value)
-              )
-            }
-          />
-
-        </td>
-
-        <td>
-
-          <input
-            type="number"
-            className="table-input"
-            value={variant.lowStock}
-              readOnly={isView}
-            onChange={(e) =>
-              updateVariant(
-                index,
-                "lowStock",
-                Number(e.target.value)
-              )
-            }
-          />
-
-        </td>
-
-        <td>
-
-          <label className="status-switch">
-
-            <input
-              type="checkbox"
-                disabled={isView}
-              checked={variant.status}
-              onChange={(e) =>
-                updateVariant(
-                  index,
-                  "status",
-                  e.target.checked
-                )
-              }
-            />
-
-            <span>
-              {variant.status
-                ? "Active"
-                : "Inactive"}
+          <div>
+            <span className="variant-eyebrow">
+              PRODUCT CONFIGURATION
             </span>
 
-          </label>
+            <h2>Generated Variants</h2>
 
-        </td>
-        <td>
+            <p>
+              Manage pricing, inventory and availability for each variant.
+            </p>
+          </div>
+        </div>
 
-{!isView && (
-
-<button
-type="button"
-className="delete-variant-btn"
-onClick={() =>
-deleteVariant(index)
-}
->
-🗑
-</button>
-
-)}
-
-</td>
-
-      </tr>
-
-    )
-  )}
-
-</tbody>
-
-        </table>
-
+        <div className="variant-count-badge">
+          <FiPackage />
+          <span>
+            {variants.length} {variants.length === 1 ? "Variant" : "Variants"}
+          </span>
+        </div>
       </div>
+
+      {/* SUMMARY */}
+      <div className="variant-summary-grid">
+        <div className="variant-summary-card">
+          <span className="variant-summary-label">Total Variants</span>
+          <strong>{variants.length}</strong>
+          <span className="variant-summary-caption">Generated combinations</span>
+        </div>
+
+        <div className="variant-summary-card">
+          <span className="variant-summary-label">Total Stock</span>
+          <strong>{totalStock.toLocaleString("en-IN")}</strong>
+          <span className="variant-summary-caption">Units available</span>
+        </div>
+
+        <div className="variant-summary-card">
+          <span className="variant-summary-label">Active</span>
+          <strong className="variant-active-number">{activeCount}</strong>
+          <span className="variant-summary-caption">Available variants</span>
+        </div>
+
+        <div className="variant-summary-card">
+          <span className="variant-summary-label">Inactive</span>
+          <strong className="variant-inactive-number">{inactiveCount}</strong>
+          <span className="variant-summary-caption">Disabled variants</span>
+        </div>
+      </div>
+
+      {/* TABLE */}
+      <div className="variant-table-card">
+        <div className="variant-table-card-header">
+          <div>
+            <h3>Variant Inventory</h3>
+            <p>Review and manage individual variant details.</p>
+          </div>
+
+          {isView && (
+            <span className="variant-readonly-badge">
+              <FiCheckCircle />
+              Read Only
+            </span>
+          )}
+        </div>
+
+        <div className="variant-table-wrapper">
+          <table className="variant-table">
+            <thead>
+              <tr>
+                <th>VARIANT</th>
+                <th>BARCODE</th>
+                <th>SKU</th>
+                <th>PURCHASE PRICE</th>
+                <th>SELLING PRICE</th>
+                <th>STOCK</th>
+                <th>LOW STOCK</th>
+                <th>STATUS</th>
+                {!isView && <th>ACTIONS</th>}
+              </tr>
+            </thead>
+
+            <tbody>
+              {variants.map((variant, index) => {
+                const isActive = variant.status !== false;
+
+                return (
+                  <tr key={variant.id || variant.barcode || index}>
+                    <td>
+                      <div className="variant-name-cell">
+                        <div className="variant-row-icon">
+                          <FiPackage />
+                        </div>
+
+                        <div>
+                          <strong>
+                            {variant.variantName || "Default Variant"}
+                          </strong>
+                          <span>Variant {String(index + 1).padStart(2, "0")}</span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td>
+                      <span className="variant-code">
+                        {variant.barcode || "—"}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span className="variant-code">
+                        {variant.sku || "—"}
+                      </span>
+                    </td>
+
+                    {[
+                      "purchasePrice",
+                      "sellingPrice",
+                      "stock",
+                      "lowStock",
+                    ].map((field) => (
+                      <td key={field}>
+                        <input
+                          type="number"
+                          min="0"
+                          step="any"
+                          className="variant-table-input"
+                          value={variant[field] ?? ""}
+                          readOnly={isView}
+                          aria-label={`${variant.variantName || "Variant"} ${field}`}
+                          onChange={(e) =>
+                            updateVariant(
+                              index,
+                              field,
+                              e.target.value === ""
+                                ? ""
+                                : Math.max(0, Number(e.target.value))
+                            )
+                          }
+                        />
+                      </td>
+                    ))}
+
+                    <td>
+                      <label
+                        className={`variant-status-switch ${
+                          isActive ? "is-active" : "is-inactive"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          disabled={isView}
+                          checked={isActive}
+                          onChange={(e) =>
+                            updateVariant(index, "status", e.target.checked)
+                          }
+                        />
+
+                        <span className="variant-switch-track">
+                          <span className="variant-switch-thumb" />
+                        </span>
+
+                        <span className="variant-status-text">
+                          {isActive ? "Active" : "Inactive"}
+                        </span>
+                      </label>
+                    </td>
+
+                    {!isView && (
+                      <td>
+                        <button
+                          type="button"
+                          className="variant-delete-button"
+                          onClick={() => deleteVariant(index)}
+                          title="Delete variant"
+                          aria-label={`Delete ${variant.variantName || "variant"}`}
+                        >
+                          <FiTrash2 />
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="variant-table-footer">
+          <span>
+            Showing <strong>{variants.length}</strong> product variants
+          </span>
+
+          <span>
+            Total inventory: <strong>{totalStock.toLocaleString("en-IN")} units</strong>
+          </span>
+        </div>
+      </div>
+
+      {/* BULK UPDATE */}
       {!isView && (
-          <div className="bulk-update-card">
+        <div className="variant-bulk-card">
+          <div className="variant-bulk-heading">
+            <div className="variant-bulk-icon">
+              <FiSliders />
+            </div>
 
-  <h3>Bulk Update</h3>
+            <div>
+              <h3>Bulk Update</h3>
+              <p>
+                Apply the same value to all {variants.length} variants at once.
+              </p>
+            </div>
+          </div>
 
-  <div className="bulk-grid">
+          <div className="variant-bulk-grid">
+            {bulkFields.map((item) => (
+              <div className="variant-bulk-item" key={item.field}>
+                <label>{item.label}</label>
 
-    {/* Purchase */}
+                <div className="variant-bulk-input-wrap">
+                  {item.prefix && (
+                    <span className="variant-input-prefix">
+                      {item.prefix}
+                    </span>
+                  )}
 
-    <div className="bulk-item">
+                  <input
+                    type="number"
+                    min="0"
+                    step="any"
+                    placeholder="Enter value"
+                    value={bulk[item.field]}
+                    onChange={(e) =>
+                      handleBulkChange(item.field, e.target.value)
+                    }
+                  />
+                </div>
 
-      <label>Purchase Price</label>
+                <button
+                  type="button"
+                  className="variant-bulk-apply"
+                  disabled={bulk[item.field] === ""}
+                  onClick={() => applyToAll(item.field)}
+                >
+                  Apply to all
+                </button>
+              </div>
+            ))}
+          </div>
 
-      <input
-        type="number"
-        value={bulk.purchasePrice}
-        onChange={(e) =>
-          setBulk({
-            ...bulk,
-            purchasePrice: e.target.value,
-          })
-        }
-      />
-
-      <button
-        onClick={() =>
-          applyToAll("purchasePrice")
-        }
-      >
-        Apply
-      </button>
-
-    </div>
-
-    {/* Selling */}
-
-    <div className="bulk-item">
-
-      <label>Selling Price</label>
-
-      <input
-        type="number"
-        value={bulk.sellingPrice}
-        onChange={(e) =>
-          setBulk({
-            ...bulk,
-            sellingPrice: e.target.value,
-          })
-        }
-      />
-
-      <button
-        onClick={() =>
-          applyToAll("sellingPrice")
-        }
-      >
-        Apply
-      </button>
-
-    </div>
-
-    {/* Stock */}
-
-    <div className="bulk-item">
-
-      <label>Stock</label>
-
-      <input
-        type="number"
-        value={bulk.stock}
-        onChange={(e) =>
-          setBulk({
-            ...bulk,
-            stock: e.target.value,
-          })
-        }
-      />
-
-      <button
-        onClick={() =>
-          applyToAll("stock")
-        }
-      >
-        Apply
-      </button>
-
-    </div>
-
-    {/* Low Stock */}
-
-    <div className="bulk-item">
-
-      <label>Low Stock</label>
-
-      <input
-        type="number"
-        value={bulk.lowStock}
-        onChange={(e) =>
-          setBulk({
-            ...bulk,
-            lowStock: e.target.value,
-          })
-        }
-      />
-
-      <button
-        onClick={() =>
-          applyToAll("lowStock")
-        }
-      >
-        Apply
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
+          <div className="variant-bulk-note">
+            <FiAlertCircle />
+            <span>
+              Bulk changes update all variants immediately in this form. Save
+              the product to persist your changes.
+            </span>
+          </div>
+        </div>
       )}
-
-    </div>
+    </section>
   );
 }

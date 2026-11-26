@@ -1,120 +1,90 @@
+
 import { useRef } from "react";
 import "./ProductImages.css";
 
-export default function ProductImages({
-  product,
-  setProduct,
-}) {
-  const inputRef = useRef();
-
-  /* ===========================================
-      IMAGE PICKER
-  =========================================== */
+export default function ProductImages({ product, setProduct }) {
+  const inputRef = useRef(null);
 
   const handleImages = (e) => {
-    const files = Array.from(e.target.files);
-
+    const files = Array.from(e.target.files || []);
     if (!files.length) return;
 
     const images = files.map((file, index) => ({
-      id:
-        Date.now().toString() + index,
-
+      id: `${Date.now()}-${index}`,
       file,
-
-      preview:
-        URL.createObjectURL(file),
-
-      isCover:
-        product.images.length === 0 &&
-        index === 0,
+      preview: URL.createObjectURL(file),
+      isCover: false,
     }));
 
-    setProduct((prev) => ({
-      ...prev,
+    setProduct((prev) => {
+      const existingImages = prev.images || [];
+      const combined = [...existingImages, ...images];
 
-      images: [
-        ...prev.images,
-        ...images,
-      ],
-    }));
+      if (!combined.some((image) => image.isCover)) {
+        combined[0] = { ...combined[0], isCover: true };
+      }
+
+      return { ...prev, images: combined };
+    });
+
+    // Allow selecting the same file again later.
+    e.target.value = "";
   };
-
-  /* ===========================================
-      DELETE IMAGE
-  =========================================== */
 
   const removeImage = (id) => {
-    const updated = product.images.filter(
-      (img) => img.id !== id
-    );
+    setProduct((prev) => {
+      const removed = prev.images.find((image) => image.id === id);
 
-    if (
-      updated.length > 0 &&
-      !updated.some((i) => i.isCover)
-    ) {
-      updated[0].isCover = true;
-    }
+      if (removed?.file && removed.preview) {
+        URL.revokeObjectURL(removed.preview);
+      }
 
-    setProduct((prev) => ({
-      ...prev,
-      images: updated,
-    }));
+      let updated = prev.images.filter((image) => image.id !== id);
+
+      if (updated.length && !updated.some((image) => image.isCover)) {
+        updated = updated.map((image, index) => ({
+          ...image,
+          isCover: index === 0,
+        }));
+      }
+
+      return { ...prev, images: updated };
+    });
   };
 
-  /* ===========================================
-      SET COVER
-  =========================================== */
-
   const setCover = (id) => {
-    const updated = product.images.map(
-      (img) => ({
-        ...img,
-        isCover: img.id === id,
-      })
-    );
-
     setProduct((prev) => ({
       ...prev,
-      images: updated,
+      images: prev.images.map((image) => ({
+        ...image,
+        isCover: image.id === id,
+      })),
     }));
   };
 
   return (
     <div className="product-card">
-
       <div className="product-card-header">
-
         <h2>Product Images</h2>
-
-        <p>
-          Upload high quality product
-          images.
-        </p>
-
+        <p>Upload, remove or change your product images.</p>
       </div>
 
       <div className="product-card-body">
-
-        {/* Upload */}
-
         <div
           className="upload-box"
-          onClick={() =>
-            inputRef.current.click()
-          }
+          onClick={() => inputRef.current?.click()}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              inputRef.current?.click();
+            }
+          }}
         >
-          <h3>
-            + Upload Images
-          </h3>
-
-          <p>
-            Click here to choose images
-          </p>
-
-          <span>
-            PNG • JPG • WEBP
-          </span>
+          <h3>+ Upload Images</h3>
+          <p>Click here to choose images</p>
+          <span>PNG • JPG • WEBP</span>
 
           <input
             ref={inputRef}
@@ -126,37 +96,24 @@ export default function ProductImages({
           />
         </div>
 
-        {/* Preview */}
-
-        {product.images.length > 0 && (
-
+        {product.images?.length > 0 && (
           <div className="image-grid">
-
             {product.images.map((img) => (
-
-              <div
-                className="image-card"
-                key={img.id}
-              >
+              <div className="image-card" key={img.id}>
                 {img.isCover && (
-                  <div className="cover-badge">
-                    Cover
-                  </div>
+                  <div className="cover-badge">Cover</div>
                 )}
 
                 <img
-                  src={img.preview}
-                  alt=""
+                  src={img.preview || img.url}
+                  alt="Product"
                 />
 
                 <div className="image-actions">
-
                   {!img.isCover && (
                     <button
                       type="button"
-                      onClick={() =>
-                        setCover(img.id)
-                      }
+                      onClick={() => setCover(img.id)}
                     >
                       Set Cover
                     </button>
@@ -165,25 +122,16 @@ export default function ProductImages({
                   <button
                     className="delete-btn"
                     type="button"
-                    onClick={() =>
-                      removeImage(img.id)
-                    }
+                    onClick={() => removeImage(img.id)}
                   >
                     Delete
                   </button>
-
                 </div>
-
               </div>
-
             ))}
-
           </div>
-
         )}
-
       </div>
-
     </div>
   );
 }

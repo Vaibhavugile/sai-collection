@@ -1,3 +1,5 @@
+
+import { useEffect, useRef } from "react";
 import "./OrderDetailsDrawer.css";
 
 export default function OrderDetailsDrawer({
@@ -6,347 +8,256 @@ export default function OrderDetailsDrawer({
   onPrint,
   onDownloadPDF,
 }) {
+  const bodyRef = useRef(null);
+
+  useEffect(() => {
+    if (!order) return;
+
+    // Always start at the top when opening another order.
+    if (bodyRef.current) {
+      bodyRef.current.scrollTop = 0;
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") onClose?.();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [order, onClose]);
 
   if (!order) return null;
 
   const formatDate = (createdAt) => {
+    if (!createdAt) return "—";
 
-    if (!createdAt) return "-";
+    const date =
+      typeof createdAt?.toDate === "function"
+        ? createdAt.toDate()
+        : new Date(createdAt);
 
-    const date = createdAt.toDate
-      ? createdAt.toDate()
-      : new Date(createdAt);
+    if (Number.isNaN(date.getTime())) return "—";
 
-    return date.toLocaleString();
-
+    return date.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   const money = (value) =>
-    `₹${Number(value || 0).toFixed(2)}`;
+    `₹${Number(value || 0).toLocaleString("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+
+  const statusClass = String(order.status || "unknown").toLowerCase();
+  const paymentClass = String(order.paymentMethod || "unknown").toLowerCase();
 
   return (
-
-    <div
-      className="drawer-overlay"
-      onClick={onClose}
-    >
-
-      <div
-        className="order-drawer"
-        onClick={(e) => e.stopPropagation()}
+    <div className="order-drawer-overlay" onMouseDown={onClose}>
+      <aside
+        className="order-details-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Order ${order.invoiceNumber || "details"}`}
+        onMouseDown={(event) => event.stopPropagation()}
       >
-
-        {/* ============================
-            HEADER
-        ============================ */}
-
-        <div className="drawer-header">
-
+        {/* FIXED HEADER */}
+        <header className="order-drawer-header">
           <div>
-
-            <h2>
-
-              Invoice #{order.invoiceNumber}
-
-            </h2>
-
-            <p>
-
-              {formatDate(order.createdAt)}
-
-            </p>
-
+            <span className="order-drawer-eyebrow">SALES INVOICE</span>
+            <h2>#{order.invoiceNumber || "—"}</h2>
+            <p>{formatDate(order.createdAt)}</p>
           </div>
 
           <button
-            className="close-btn"
+            type="button"
+            className="order-drawer-close"
             onClick={onClose}
+            aria-label="Close order details"
           >
-
-            ✕
-
+            ×
           </button>
+        </header>
 
-        </div>
+        {/* SCROLLABLE CONTENT */}
+        <div className="order-drawer-body" ref={bodyRef}>
 
-        {/* ============================
-            ORDER INFO
-        ============================ */}
-
-        <div className="drawer-section">
-
-          <h3>Order Details</h3>
-
-          <div className="info-row">
-
-            <span>Status</span>
-
-            <strong>
-
-              <span
-                className={`status-badge ${String(
-                  order.status || ""
-                ).toLowerCase()}`}
-              >
-
-                {order.status || "-"}
-
-              </span>
-
-            </strong>
-
-          </div>
-
-          <div className="info-row">
-
-            <span>Payment</span>
-
-            <strong>
-
-              <span
-                className={`payment-badge ${String(
-                  order.paymentMethod || ""
-                ).toLowerCase()}`}
-              >
-
-                {order.paymentMethod || "-"}
-
-              </span>
-
-            </strong>
-
-          </div>
-
-          <div className="info-row">
-
-            <span>Cashier</span>
-
-            <strong>
-
-              {order.cashier || "-"}
-
-            </strong>
-
-          </div>
-
-        </div>
-
-        {/* ============================
-            CUSTOMER
-        ============================ */}
-
-        <div className="drawer-section">
-
-          <h3>Customer</h3>
-
-          <div className="info-row">
-
-            <span>Name</span>
-
-            <strong>
-
-              {order.customer?.name ||
-                "Walk-in Customer"}
-
-            </strong>
-
-          </div>
-
-          <div className="info-row">
-
-            <span>Mobile</span>
-
-            <strong>
-
-              {order.customer?.mobile || "-"}
-
-            </strong>
-
-          </div>
-
-        </div>
-
-        {/* ============================
-            ITEMS
-        ============================ */}
-
-        <div className="drawer-section">
-
-          <h3>Items</h3>
-
-          {(order.items || []).map((item, index) => (
-
-            <div
-              className="item-row"
-              key={item.variantId || index}
-            >
-
-              <div>
-
-                <strong>
-
-                  {item.productName}
-
-                </strong>
-
-                <small>
-
-                  {item.variantName}
-
-                </small>
-
-              </div>
-
-              <div>
-
-                {item.qty} × {money(item.sellingPrice)}
-
-              </div>
-
+          {/* ORDER INFORMATION */}
+          <section className="order-drawer-section">
+            <div className="order-section-title">
+              <h3>Order Information</h3>
+              <span>OVERVIEW</span>
             </div>
 
-          ))}
+            <div className="order-detail-row">
+              <span>Order status</span>
+              <strong>
+                <span className={`order-detail-badge ${statusClass}`}>
+                  {order.status || "—"}
+                </span>
+              </strong>
+            </div>
 
+            <div className="order-detail-row">
+              <span>Payment method</span>
+              <strong>
+                <span className={`order-detail-badge ${paymentClass}`}>
+                  {order.paymentMethod || "—"}
+                </span>
+              </strong>
+            </div>
+
+            <div className="order-detail-row">
+              <span>Cashier</span>
+              <strong>{order.cashier || "—"}</strong>
+            </div>
+          </section>
+
+          {/* CUSTOMER DETAILS */}
+          <section className="order-drawer-section">
+            <div className="order-section-title">
+              <h3>Customer Details</h3>
+              <span>BUYER INFORMATION</span>
+            </div>
+
+            <div className="order-customer-highlight">
+              <div className="order-customer-avatar">
+                {(order.customer?.name || "W").charAt(0).toUpperCase()}
+              </div>
+
+              <div>
+                <strong>
+                  {order.customer?.name || "Walk-in Customer"}
+                </strong>
+                <span>Customer</span>
+              </div>
+            </div>
+
+            <div className="order-detail-row">
+              <span>Customer Name</span>
+              <strong>
+                {order.customer?.name || "Walk-in Customer"}
+              </strong>
+            </div>
+
+            <div className="order-detail-row">
+              <span>Mobile Number</span>
+              <strong>
+                {order.customer?.mobile || "Not provided"}
+              </strong>
+            </div>
+          </section>
+
+          {/* ITEMS */}
+          <section className="order-drawer-section">
+            <div className="order-section-title">
+              <h3>Items Purchased</h3>
+              <span>{(order.items || []).length} LINE ITEMS</span>
+            </div>
+
+            {(order.items || []).map((item, index) => (
+              <div
+                className="order-drawer-item"
+                key={item.variantId || item.id || index}
+              >
+                <div className="order-item-main">
+                  <strong>{item.productName || "Product"}</strong>
+                  <span>{item.variantName || "Standard variant"}</span>
+                  {item.sku && <small>SKU: {item.sku}</small>}
+                </div>
+
+                <div className="order-item-price">
+                  <strong>
+                    {money(Number(item.qty || 0) * Number(item.sellingPrice || 0))}
+                  </strong>
+                  <span>
+                    {item.qty || 0} × {money(item.sellingPrice)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </section>
+
+          {/* BILL SUMMARY */}
+          <section className="order-drawer-section">
+            <div className="order-section-title">
+              <h3>Bill Summary</h3>
+              <span>AMOUNT BREAKDOWN</span>
+            </div>
+
+            <div className="order-detail-row">
+              <span>Total items</span>
+              <strong>{Number(order.totalQuantity || 0)}</strong>
+            </div>
+
+            <div className="order-detail-row">
+              <span>Subtotal</span>
+              <strong>{money(order.subtotal)}</strong>
+            </div>
+
+            <div className="order-detail-row">
+              <span>GST</span>
+              <strong>{money(order.gst)}</strong>
+            </div>
+
+            <div className="order-detail-row order-grand-total">
+              <span>Grand total</span>
+              <strong>{money(order.grandTotal)}</strong>
+            </div>
+
+            <div className="order-detail-row">
+              <span>Profit</span>
+              <strong className="order-profit-value">
+                {money(order.totalProfit)}
+              </strong>
+            </div>
+          </section>
+
+          {/* PAYMENT */}
+          <section className="order-drawer-section">
+            <div className="order-section-title">
+              <h3>Payment Details</h3>
+              <span>SETTLEMENT</span>
+            </div>
+
+            <div className="order-detail-row">
+              <span>Received</span>
+              <strong>{money(order.receivedAmount)}</strong>
+            </div>
+
+            <div className="order-detail-row">
+              <span>Change returned</span>
+              <strong>{money(order.changeAmount)}</strong>
+            </div>
+          </section>
         </div>
 
-        {/* ============================
-            BILL SUMMARY
-        ============================ */}
-
-        <div className="drawer-section">
-
-          <h3>Bill Summary</h3>
-
-          <div className="info-row">
-
-            <span>Total Items</span>
-
-            <strong>
-
-              {order.totalQuantity || 0}
-
-            </strong>
-
-          </div>
-
-          <div className="info-row">
-
-            <span>Subtotal</span>
-
-            <strong>
-
-              {money(order.subtotal)}
-
-            </strong>
-
-          </div>
-
-          <div className="info-row">
-
-            <span>GST</span>
-
-            <strong>
-
-              {money(order.gst)}
-
-            </strong>
-
-          </div>
-
-          <div className="info-row">
-
-            <span>Total</span>
-
-            <strong>
-
-              {money(order.grandTotal)}
-
-            </strong>
-
-          </div>
-
-          <div className="info-row">
-
-            <span>Profit</span>
-
-            <strong>
-
-              {money(order.totalProfit)}
-
-            </strong>
-
-          </div>
-
-        </div>
-
-        {/* ============================
-            PAYMENT
-        ============================ */}
-
-        <div className="drawer-section">
-
-          <h3>Payment Details</h3>
-
-          <div className="info-row">
-
-            <span>Received</span>
-
-            <strong>
-
-              {money(order.receivedAmount)}
-
-            </strong>
-
-          </div>
-
-          <div className="info-row">
-
-            <span>Change Returned</span>
-
-            <strong>
-
-              {money(order.changeAmount)}
-
-            </strong>
-
-          </div>
-
-        </div>
-
-        {/* ============================
-            FOOTER
-        ============================ */}
-
-        <div className="drawer-footer">
-
+        {/* FIXED FOOTER */}
+        <footer className="order-drawer-footer">
           <button
-            className="primary-btn"
-            onClick={() =>
-              onPrint?.(order)
-            }
+            type="button"
+            className="order-drawer-print"
+            onClick={() => onPrint?.(order)}
           >
-
-            🖨 Print Invoice
-
+            Print Invoice
           </button>
 
           <button
-            className="secondary-btn"
-            onClick={() =>
-              onDownloadPDF?.(order)
-            }
+            type="button"
+            className="order-drawer-pdf"
+            onClick={() => onDownloadPDF?.(order)}
           >
-
-            📄 Download PDF
-
+            Download PDF
           </button>
-
-        </div>
-
-      </div>
-
+        </footer>
+      </aside>
     </div>
-
   );
-
 }
