@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "saicollection",
     "public": "dist",
     "ignore": [
       "firebase.json",

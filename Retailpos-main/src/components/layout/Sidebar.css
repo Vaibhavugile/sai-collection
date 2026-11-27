@@ -174,3 +174,25 @@
 .sai-sidebar.is-collapsed .sai-sidebar-signout .MuiListItemIcon-root {
   min-width: 0 !important;
 }
+
+.sai-sidebar-permission-loading {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #a77b2d;
+}
+
+.sai-sidebar-permission-loading p {
+  color: #948775;
+  font-family: "DM Sans", sans-serif;
+  font-size: 10px;
+}
+
+.sai-sidebar-no-access {
+  padding: 20px 12px !important;
+  color: #a39887 !important;
+  font-size: 10px !important;
+  text-align: center;
+}

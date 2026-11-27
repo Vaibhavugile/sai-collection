@@ -1,8 +1,15 @@
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
-import { signOut } from "firebase/auth";
-import { auth } from "../../firebase"; // Adjust path if needed
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+} from "firebase/firestore";
+
+import { auth, db } from "../../firebase";
 
 import {
   DashboardRounded,
@@ -17,6 +24,7 @@ import {
   ChevronLeftRounded,
   CloseRounded,
   LogoutRounded,
+  AdminPanelSettingsRounded,
 } from "@mui/icons-material";
 
 import {
@@ -29,24 +37,70 @@ import {
   IconButton,
   Divider,
   Tooltip,
+  CircularProgress,
 } from "@mui/material";
 
 import "./Sidebar.css";
 
-const menus = [
-  { title: "Dashboard", icon: <DashboardRounded />, path: "/dashboard" },
+const ALL_MENUS = [
+  {
+    title: "Dashboard",
+    icon: <DashboardRounded />,
+    path: "/dashboard",
+    permission: "dashboard",
+  },
   { header: "PRODUCTS" },
-  { title: "Categories", icon: <CategoryRounded />, path: "/categories" },
-  { title: "Sub Categories", icon: <Inventory2Rounded />, path: "/subcategories" },
-  { title: "Sizes", icon: <StraightenRounded />, path: "/sizes" },
-  { title: "Products", icon: <StoreRounded />, path: "/inventory" },
+  {
+    title: "Categories",
+    icon: <CategoryRounded />,
+    path: "/categories",
+    permission: "categories",
+  },
+  {
+    title: "Sub Categories",
+    icon: <Inventory2Rounded />,
+    path: "/subcategories",
+    permission: "subcategories",
+  },
+  {
+    title: "Sizes",
+    icon: <StraightenRounded />,
+    path: "/sizes",
+    permission: "sizes",
+  },
+  {
+    title: "Products",
+    icon: <StoreRounded />,
+    path: "/inventory",
+    permission: "inventory",
+  },
   { header: "PURCHASE" },
-  { title: "Orders", icon: <ShoppingCartRounded />, path: "/orders" },
+  {
+    title: "Orders",
+    icon: <ShoppingCartRounded />,
+    path: "/orders",
+    permission: "orders",
+  },
   { header: "SALES" },
-  { title: "Billing", icon: <ReceiptLongRounded />, path: "/billing" },
-  { title: "Customers", icon: <PeopleRounded />, path: "/customers" },
+  {
+    title: "Billing",
+    icon: <ReceiptLongRounded />,
+    path: "/billing",
+    permission: "billing",
+  },
+  {
+    title: "Customers",
+    icon: <PeopleRounded />,
+    path: "/customers",
+    permission: "customers",
+  },
   { header: "INSIGHTS" },
-  { title: "Reports", icon: <AssessmentRounded />, path: "/reports" },
+  {
+    title: "Reports",
+    icon: <AssessmentRounded />,
+    path: "/reports",
+    permission: "reports",
+  },
 ];
 
 export default function Sidebar({
@@ -58,6 +112,148 @@ export default function Sidebar({
 
   const [collapsed, setCollapsed] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [userRole, setUserRole] = useState("");
+  const [permissions, setPermissions] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Load the logged-in user's role and permissions.
+  useEffect(() => {
+    let mounted = true;
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!mounted) return;
+
+      setProfileLoading(true);
+      setUserRole("");
+      setPermissions([]);
+      setIsAdmin(false);
+
+      if (!user) {
+        setProfileLoading(false);
+        return;
+      }
+
+      try {
+        const profileSnapshot = await getDoc(doc(db, "users", user.uid));
+
+        if (!profileSnapshot.exists()) {
+          if (mounted) setProfileLoading(false);
+          return;
+        }
+
+        const profile = profileSnapshot.data();
+
+        if (profile.status !== "active") {
+          if (mounted) setProfileLoading(false);
+          return;
+        }
+
+        const roleName = String(profile.role || "").trim().toLowerCase();
+
+        // Admin gets full access.
+        if (roleName === "admin") {
+          if (mounted) {
+            setUserRole("Admin");
+            setIsAdmin(true);
+            setPermissions(ALL_MENUS.filter((item) => item.permission).map((item) => item.permission));
+          }
+          return;
+        }
+
+        let roleData = null;
+
+        // Preferred method: use the assigned Firestore role document ID.
+        if (profile.roleId) {
+          const roleSnapshot = await getDoc(
+            doc(db, "roles", profile.roleId)
+          );
+
+          if (roleSnapshot.exists()) {
+            roleData = roleSnapshot.data();
+          }
+        } else if (roleName) {
+          // Backward compatibility with existing Signup role values.
+          const rolesSnapshot = await getDocs(collection(db, "roles"));
+
+          roleData = rolesSnapshot.docs
+            .map((roleDoc) => roleDoc.data())
+            .find(
+              (role) =>
+                String(role.name || "").trim().toLowerCase() === roleName
+            );
+        }
+
+        if (mounted && roleData && roleData.status === "active") {
+          setUserRole(roleData.name || profile.role || "");
+          setPermissions(
+            Array.isArray(roleData.permissions)
+              ? roleData.permissions
+              : []
+          );
+        }
+      } catch (error) {
+        console.error("Unable to load sidebar permissions:", error);
+      } finally {
+        if (mounted) setProfileLoading(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
+  }, []);
+
+  // Build visible menu and retain section headings only when needed.
+  const visibleMenus = useMemo(() => {
+    const permittedItems = ALL_MENUS.filter(
+      (item) => item.permission && permissions.includes(item.permission)
+    );
+
+    const permittedPaths = new Set(
+      permittedItems.map((item) => item.path)
+    );
+
+    const result = [];
+
+    ALL_MENUS.forEach((item) => {
+      if (item.header) {
+        const headerIndex = ALL_MENUS.indexOf(item);
+
+        const nextHeaderIndex = ALL_MENUS.findIndex(
+          (entry, index) => index > headerIndex && entry.header
+        );
+
+        const endIndex =
+          nextHeaderIndex === -1 ? ALL_MENUS.length : nextHeaderIndex;
+
+        const hasVisibleItem = ALL_MENUS
+          .slice(headerIndex + 1, endIndex)
+          .some((entry) => permittedPaths.has(entry.path));
+
+        if (hasVisibleItem) result.push(item);
+        return;
+      }
+
+      if (permittedPaths.has(item.path)) {
+        result.push(item);
+      }
+    });
+
+    // Roles management is reserved for admin.
+    if (isAdmin) {
+      result.push({ header: "ADMINISTRATION" });
+      result.push({
+        title: "Roles & Permissions",
+        icon: <AdminPanelSettingsRounded />,
+        path: "/roles",
+      });
+    }
+
+    return result;
+  }, [permissions, isAdmin]);
 
   const toggleCollapsed = () => {
     setCollapsed((current) => {
@@ -76,9 +272,7 @@ export default function Sidebar({
 
     try {
       setSigningOut(true);
-
       await signOut(auth);
-
       closeMobile();
       navigate("/login", { replace: true });
     } catch (error) {
@@ -147,54 +341,73 @@ export default function Sidebar({
         </Box>
 
         <List className="sai-sidebar-menu" disablePadding>
-          {menus.map((item, index) => {
-            if (item.header) {
-              return !collapsed ? (
-                <Typography
-                  key={`${item.header}-${index}`}
-                  className="sai-sidebar-section-label"
-                >
-                  {item.header}
-                </Typography>
-              ) : (
-                <Box
-                  key={`${item.header}-${index}`}
-                  className="sai-sidebar-section-divider"
-                />
-              );
-            }
-
-            const link = (
-              <ListItemButton
-                component={NavLink}
-                to={item.path}
-                end={item.path === "/dashboard"}
-                onClick={closeMobile}
-                className={({ isActive }) =>
-                  `sai-sidebar-item${isActive ? " active" : ""}`
+          {profileLoading ? (
+            <Box className="sai-sidebar-permission-loading">
+              <CircularProgress size={19} />
+              {!collapsed && (
+                <Typography>Loading permissions...</Typography>
+              )}
+            </Box>
+          ) : (
+            <>
+              {visibleMenus.map((item, index) => {
+                if (item.header) {
+                  return !collapsed ? (
+                    <Typography
+                      key={`${item.header}-${index}`}
+                      className="sai-sidebar-section-label"
+                    >
+                      {item.header}
+                    </Typography>
+                  ) : (
+                    <Box
+                      key={`${item.header}-${index}`}
+                      className="sai-sidebar-section-divider"
+                    />
+                  );
                 }
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
 
-                {!collapsed && <ListItemText primary={item.title} />}
+                const link = (
+                  <ListItemButton
+                    component={NavLink}
+                    to={item.path}
+                    end={item.path === "/dashboard"}
+                    onClick={closeMobile}
+                    className={({ isActive }) =>
+                      `sai-sidebar-item${isActive ? " active" : ""}`
+                    }
+                  >
+                    <ListItemIcon>{item.icon}</ListItemIcon>
 
-                {!collapsed && item.path === "/dashboard" && (
-                  <span className="sai-sidebar-active-dot" />
-                )}
-              </ListItemButton>
-            );
+                    {!collapsed && (
+                      <ListItemText primary={item.title} />
+                    )}
 
-            return (
-              <Tooltip
-                key={item.path}
-                title={collapsed ? item.title : ""}
-                placement="right"
-                arrow
-              >
-                {link}
-              </Tooltip>
-            );
-          })}
+                    {!collapsed && item.path === "/dashboard" && (
+                      <span className="sai-sidebar-active-dot" />
+                    )}
+                  </ListItemButton>
+                );
+
+                return (
+                  <Tooltip
+                    key={item.path}
+                    title={collapsed ? item.title : ""}
+                    placement="right"
+                    arrow
+                  >
+                    {link}
+                  </Tooltip>
+                );
+              })}
+
+              {!visibleMenus.length && (
+                <Typography className="sai-sidebar-no-access">
+                  {collapsed ? "!" : "No sidebar permissions assigned"}
+                </Typography>
+              )}
+            </>
+          )}
         </List>
 
         <Box className="sai-sidebar-footer">
@@ -206,7 +419,7 @@ export default function Sidebar({
                 Sai Collection
               </Typography>
               <Typography className="sai-sidebar-footer-subtitle">
-                Retail management
+                {userRole || "Retail management"}
               </Typography>
             </Box>
           )}
@@ -216,7 +429,6 @@ export default function Sidebar({
           )}
         </Box>
 
-        {/* SIGN OUT */}
         <Divider className="sai-sidebar-divider" />
 
         <Tooltip
