@@ -1,4 +1,3 @@
-
 import "./CustomerCard.css";
 import { useEffect, useRef, useState } from "react";
 import { getCustomerByMobile } from "../../services/customerService";
@@ -21,9 +20,34 @@ export default function CustomerCard({ customer, setCustomer }) {
 
   const lookupVersion = useRef(0);
 
+  /**
+   * Reset local input state when the parent clears the customer
+   * after a successfully completed sale.
+   */
+  useEffect(() => {
+    if (customer === null) {
+      // Invalidate any customer lookup that is still in flight.
+      lookupVersion.current += 1;
+
+      setMobile("");
+      setName("");
+      setLoading(false);
+      setLookupError("");
+    }
+  }, [customer]);
+
   // Search customer when a valid mobile number is entered.
   useEffect(() => {
     const version = ++lookupVersion.current;
+
+    // Empty mobile means a fresh walk-in billing form.
+    if (!mobile) {
+      setLoading(false);
+      setLookupError("");
+      setName("");
+      setCustomer(null);
+      return;
+    }
 
     if (mobile.length !== 10) {
       setLoading(false);
@@ -86,10 +110,15 @@ export default function CustomerCard({ customer, setCustomer }) {
     return () => clearTimeout(timer);
   }, [mobile, setCustomer]);
 
-  // Keep manually entered customer name synchronized.
+  // Keep manually entered customer name synchronized with the parent.
   useEffect(() => {
-    setCustomer((prev) => ({
-      ...(prev || {}),
+    if (!mobile && !name) {
+      setCustomer(null);
+      return;
+    }
+
+    setCustomer((previous) => ({
+      ...(previous || {}),
       mobile,
       name,
     }));
@@ -107,7 +136,6 @@ export default function CustomerCard({ customer, setCustomer }) {
 
   return (
     <section className="customer-card">
-
       {/* HEADER */}
       <div className="customer-card-header">
         <div className="customer-heading-left">
@@ -121,15 +149,17 @@ export default function CustomerCard({ customer, setCustomer }) {
           </div>
         </div>
 
-        <div className={`customer-status ${
-          loading
-            ? "searching"
-            : customer?.exists
-              ? "success"
-              : isValidMobile
-                ? "new"
-                : "default"
-        }`}>
+        <div
+          className={`customer-status ${
+            loading
+              ? "searching"
+              : customer?.exists
+                ? "success"
+                : isValidMobile
+                  ? "new"
+                  : "default"
+          }`}
+        >
           {loading ? (
             <>
               <span className="customer-status-loader" />
@@ -156,7 +186,6 @@ export default function CustomerCard({ customer, setCustomer }) {
 
       {/* FORM */}
       <div className="customer-form-grid">
-
         <div className="customer-form-group">
           <label>
             <FiPhone />
@@ -218,7 +247,6 @@ export default function CustomerCard({ customer, setCustomer }) {
               : "Enter a name for a new customer"}
           </span>
         </div>
-
       </div>
 
       {lookupError && (
@@ -229,7 +257,6 @@ export default function CustomerCard({ customer, setCustomer }) {
 
       {/* CUSTOMER STATISTICS */}
       <div className="customer-stats">
-
         <div className="customer-stat-item">
           <div className="customer-stat-icon orders">
             <FiShoppingBag />
@@ -253,9 +280,7 @@ export default function CustomerCard({ customer, setCustomer }) {
             <strong>₹{formatSpent}</strong>
           </div>
         </div>
-
       </div>
-
     </section>
   );
 }

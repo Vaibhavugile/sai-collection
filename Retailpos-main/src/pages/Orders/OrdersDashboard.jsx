@@ -1,5 +1,4 @@
-
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "./OrdersDashboard.css";
 
 import {
@@ -12,6 +11,8 @@ import OrderSummary from "./OrderSummary";
 import OrderFilters from "./OrderFilters";
 import OrdersTable from "./OrdersTable";
 import OrderDetailsPage from "./OrderDetailsPage";
+import ThermalReceipt from "../../components/Billing/ThermalReceipt";
+import { printThermalReceiptInWindow } from "../../services/thermalPrintService";
 
 const INITIAL_FILTERS = {
   search: "",
@@ -20,6 +21,43 @@ const INITIAL_FILTERS = {
   dateFilter: "today",
   custom: {},
 };
+
+const STORE_ADDRESS =
+  "Hiras Complex, Opposite Warana Agency, Main Kapad Line, Latur - 413512";
+
+function toDate(value) {
+  if (typeof value?.toDate === "function") return value.toDate();
+  const date = value ? new Date(value) : new Date();
+  return Number.isNaN(date.getTime()) ? new Date() : date;
+}
+
+function mapOrderToReceipt(order) {
+  const items = (order?.items || []).map((item) => ({
+    ...item,
+    qty: Number(item.qty || 0),
+    sellingPrice: Number(item.sellingPrice || 0),
+    productName: item.productName || item.name || "Product",
+    productCode: item.productCode || item.code || item.sku || item.barcode || "-",
+    categoryName: item.categoryName || item.category || item.productCategory || "-",
+    variantName: item.variantName || "",
+  }));
+
+  return {
+    cart: items,
+    customer: order?.customer || null,
+    billSummary: {
+      subtotal: Number(order?.subtotal || 0),
+      discount: Number(order?.discount || 0),
+      gst: Number(order?.gst || 0),
+      grandTotal: Number(order?.grandTotal || 0),
+    },
+    paymentMethod: order?.paymentMethod || "cash",
+    receivedAmount: Number(order?.receivedAmount ?? order?.grandTotal ?? 0),
+    invoiceNumber: order?.invoiceNumber || "",
+    date: toDate(order?.createdAt),
+    cashier: order?.cashier || "Administrator",
+  };
+}
 
 export default function OrdersDashboard() {
   const [orders, setOrders] = useState([]);
@@ -32,6 +70,14 @@ export default function OrdersDashboard() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [filters, setFilters] = useState(INITIAL_FILTERS);
 
+  const [printOrder, setPrintOrder] = useState(null);
+  const [isPrinting, setIsPrinting] = useState(false);
+
+  const receiptData = useMemo(
+    () => (printOrder ? mapOrderToReceipt(printOrder) : null),
+    [printOrder]
+  );
+
   const loadDashboard = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -39,7 +85,6 @@ export default function OrdersDashboard() {
     try {
       if (filters.search.trim()) {
         const result = await searchOrders(filters.search.trim());
-
         setOrders(Array.isArray(result) ? result : []);
         setSummary(null);
         setHasMore(false);
@@ -108,11 +153,7 @@ export default function OrdersDashboard() {
         lastDoc,
       });
 
-      setOrders((prev) => [
-        ...prev,
-        ...(result?.orders || []),
-      ]);
-
+      setOrders((prev) => [...prev, ...(result?.orders || [])]);
       setLastDoc(result?.lastDoc || null);
       setHasMore(Boolean(result?.hasMore));
     } catch (err) {
@@ -123,27 +164,72 @@ export default function OrdersDashboard() {
     }
   };
 
-  const handlePrint = (order) => {
-    console.log("Print Invoice", order);
+  const handlePrint = async (order) => {
+    if (!order || isPrinting) return;
+
+    if (!order.items?.length) {
+      alert("No product details are available for this invoice.");
+      return;
+    }
+
+    // Open synchronously during the click to avoid popup blocking.
+    const printWindow = window.open("", "_blank", "width=420,height=800");
+    if (!printWindow) {
+      alert("Please allow pop-ups for this website to print the receipt.");
+      return;
+    }
+
+    setIsPrinting(true);
+    setPrintOrder(order);
+
+    try {
+      // Let React render the order data into the shared ThermalReceipt.
+      await new Promise((resolve) => {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(resolve);
+        });
+      });
+
+      await printThermalReceiptInWindow(printWindow);
+    } catch (err) {
+      console.error("Order thermal printing failed:", err);
+      alert(err?.message || "Unable to print this invoice.");
+      if (!printWindow.closed) printWindow.close();
+    } finally {
+      setPrintOrder(null);
+      setIsPrinting(false);
+    }
   };
 
   const handleDownloadPDF = (order) => {
     console.log("Download PDF", order);
   };
 
-  // FULL PAGE ORDER DETAILS
   if (selectedOrder) {
     return (
-      <OrderDetailsPage
-        order={selectedOrder}
-        onBack={() => setSelectedOrder(null)}
-        onPrint={handlePrint}
-        onDownloadPDF={handleDownloadPDF}
-      />
+      <>
+        <OrderDetailsPage
+          order={selectedOrder}
+          onBack={() => setSelectedOrder(null)}
+          onPrint={handlePrint}
+          onDownloadPDF={handleDownloadPDF}
+        />
+
+        {receiptData && (
+          <div aria-hidden="true">
+            <ThermalReceipt
+              {...receiptData}
+              storeName="SAI COLLECTION"
+              storeAddress={STORE_ADDRESS}
+              storePhone="9271747777 / 8180918191"
+              logo="/assets/sai-collection-logo.png"
+            />
+          </div>
+        )}
+      </>
     );
   }
 
-  // ORDERS DASHBOARD
   return (
     <main className="orders-page">
       <header className="orders-page-header">
@@ -172,25 +258,14 @@ export default function OrdersDashboard() {
         </div>
       </header>
 
-      {!filters.search.trim() && (
-        <OrderSummary summary={summary} />
-      )}
+      {!filters.search.trim() && <OrderSummary summary={summary} />}
 
-      <OrderFilters
-        filters={filters}
-        setFilters={setFilters}
-      />
+      <OrderFilters filters={filters} setFilters={setFilters} />
 
       {error && (
         <div className="orders-error" role="alert">
           <span>{error}</span>
-
-          <button
-            type="button"
-            onClick={loadDashboard}
-          >
-            Retry
-          </button>
+          <button type="button" onClick={loadDashboard}>Retry</button>
         </div>
       )}
 
@@ -208,11 +283,27 @@ export default function OrdersDashboard() {
             onClick={handleLoadMore}
             disabled={loadingMore}
           >
-            {loadingMore
-              ? "Loading orders..."
-              : "Load More Orders"}
+            {loadingMore ? "Loading orders..." : "Load More Orders"}
           </button>
         </div>
+      )}
+
+      {receiptData && (
+        <div aria-hidden="true">
+          <ThermalReceipt
+            {...receiptData}
+            storeName="SAI COLLECTION"
+            storeAddress={STORE_ADDRESS}
+            storePhone="9271747777 / 8180918191"
+            logo="/assets/sai-collection-logo.png"
+          />
+        </div>
+      )}
+
+      {isPrinting && (
+        <span className="orders-printing-status" role="status">
+          Preparing thermal receipt...
+        </span>
       )}
     </main>
   );

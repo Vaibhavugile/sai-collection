@@ -1,50 +1,49 @@
-import { doc } from "firebase/firestore";
+
+import {
+  doc,
+  runTransaction,
+} from "firebase/firestore";
+
 import { db } from "../firebase";
 
-/**
- * Returns the invoice settings document reference.
- * Used inside checkoutService transaction.
- */
 export const getInvoiceSettingsRef = () => {
-
-  return doc(
-    db,
-    "settings",
-    "invoice"
-  );
-
+  return doc(db, "settings", "invoice");
 };
 
-/**
- * Builds the next invoice number.
- * This function DOES NOT write to Firestore.
- * The checkout transaction will update lastNumber.
- */
-export const buildNextInvoice = (
-  invoiceSettings
-) => {
-
-  const prefix =
-    invoiceSettings.prefix || "INV";
-
-  const padding =
-    invoiceSettings.padding || 6;
+export const buildNextInvoice = (invoiceSettings) => {
+  const prefix = invoiceSettings.prefix || "INV";
+  const padding = invoiceSettings.padding || 6;
 
   const nextNumber =
-    (invoiceSettings.lastNumber || 0) + 1;
+    Number(invoiceSettings.lastNumber || 0) + 1;
 
   const invoiceNumber =
-    `${prefix}-${String(nextNumber).padStart(
-      padding,
-      "0"
-    )}`;
+    `${prefix}-${String(nextNumber).padStart(padding, "0")}`;
 
   return {
-
     invoiceNumber,
-
     nextNumber,
-
   };
+};
 
+// Reserve an invoice number immediately and safely.
+// Repeated Print clicks should reuse the number stored in React state.
+export const reserveNextInvoice = async () => {
+  return await runTransaction(db, async (transaction) => {
+    const invoiceRef = getInvoiceSettingsRef();
+    const invoiceSnap = await transaction.get(invoiceRef);
+
+    if (!invoiceSnap.exists()) {
+      throw new Error("Invoice settings not found.");
+    }
+
+    const { invoiceNumber, nextNumber } =
+      buildNextInvoice(invoiceSnap.data());
+
+    transaction.update(invoiceRef, {
+      lastNumber: nextNumber,
+    });
+
+    return invoiceNumber;
+  });
 };

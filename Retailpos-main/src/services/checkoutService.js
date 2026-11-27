@@ -1,3 +1,4 @@
+
 import { runTransaction } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -41,6 +42,7 @@ export const completeSale = async ({
   paymentMethod,
   receivedAmount,
   cashier = "Administrator",
+  reservedInvoiceNumber = "",
 }) => {
 
   /*
@@ -49,7 +51,7 @@ export const completeSale = async ({
   ======================================
   */
 
-  if (!cart.length) {
+  if (!cart || !cart.length) {
     throw new Error("Cart is empty.");
   }
 
@@ -57,7 +59,7 @@ export const completeSale = async ({
     throw new Error("Customer mobile number is required.");
   }
 
-  if (customer.mobile.length !== 10) {
+  if (String(customer.mobile).length !== 10) {
     throw new Error("Customer mobile number is invalid.");
   }
 
@@ -67,7 +69,7 @@ export const completeSale = async ({
 
   if (
     paymentMethod === "cash" &&
-    Number(receivedAmount) < billSummary.grandTotal
+    Number(receivedAmount) < Number(billSummary?.grandTotal || 0)
   ) {
     throw new Error(
       "Received amount is less than Grand Total."
@@ -84,454 +86,373 @@ export const completeSale = async ({
       ======================================
       */
 
-      // Invoice
+      // INVOICE SETTINGS
 
-      const invoiceRef =
-        getInvoiceSettingsRef();
+      const invoiceRef = getInvoiceSettingsRef();
 
-      const invoiceSnap =
-        await transaction.get(invoiceRef);
+      const invoiceSnap = await transaction.get(invoiceRef);
 
       if (!invoiceSnap.exists()) {
-
-        throw new Error(
-          "Invoice settings not found."
-        );
-
+        throw new Error("Invoice settings not found.");
       }
 
-      const {
-        invoiceNumber,
-        nextNumber,
-      } = buildNextInvoice(
+      const generatedInvoice = buildNextInvoice(
         invoiceSnap.data()
       );
 
-      // Customer
+      const invoiceNumber =
+        reservedInvoiceNumber || generatedInvoice.invoiceNumber;
 
-      const customerRef =
-        getCustomerRef(
-          customer.mobile
+      const nextNumber = generatedInvoice.nextNumber;
+
+      /*
+      ======================================
+      CHECK DUPLICATE INVOICE
+      ======================================
+      */
+
+      const saleRef = getSaleRef(invoiceNumber);
+
+      const existingSaleSnap = await transaction.get(saleRef);
+
+      if (existingSaleSnap.exists()) {
+        throw new Error(
+          `Invoice ${invoiceNumber} has already been used. Please reserve a new invoice number.`
         );
+      }
 
-      const customerSnap =
-        await transaction.get(customerRef);
+      /*
+      ======================================
+      CUSTOMER
+      ======================================
+      */
+
+      const customerRef = getCustomerRef(customer.mobile);
+
+      const customerSnap = await transaction.get(customerRef);
 
       let customerData;
 
       if (!customerSnap.exists()) {
 
-        customerData =
-  buildCustomerDocument({
-
-    mobile: customer.mobile,
-
-    name: customer.name,
-
-    firstPurchaseAmount:
-      billSummary.grandTotal,
-
-  });
+        customerData = buildCustomerDocument({
+          mobile: customer.mobile,
+          name: customer.name,
+          firstPurchaseAmount: billSummary.grandTotal,
+        });
 
       } else {
 
-        customerData =
-          customerSnap.data();
+        customerData = customerSnap.data();
 
       }
 
-      // Products
+      /*
+      ======================================
+      PRODUCTS
+      ======================================
+      */
 
       const productSnapshots = [];
 
       for (const item of cart) {
 
-        const productRef =
-          getProductRef(item.productId);
+        const productRef = getProductRef(item.productId);
 
-        const productSnap =
-          await transaction.get(productRef);
+        const productSnap = await transaction.get(productRef);
 
         if (!productSnap.exists()) {
-
           throw new Error(
             `${item.productName} not found.`
           );
-
         }
 
         productSnapshots.push({
-
           item,
-
           productRef,
-
-          product:
-            productSnap.data(),
-
+          product: productSnap.data(),
         });
 
       }
 
-      // Daily Report
-
-      const reportRef =
-        getDailyReportRef();
-
-      const reportSnap =
-        await transaction.get(reportRef);
-/*
-======================================
-BUILD SALE
-======================================
-*/
-
-const sale = buildSaleDocument({
-
-  invoiceNumber,
-
-  customer: {
-
-    mobile: customer.mobile,
-
-    name: customer.name,
-
-  },
-
-  cart,
-
-  billSummary,
-
-  paymentMethod,
-
-  receivedAmount,
-
-  cashier,
-
-});
-
-/*
-======================================
-BUILD PAYMENT
-======================================
-*/
-
-const payment =
-  buildPaymentDocument({
-
-    invoiceNumber,
-
-    paymentMethod,
-
-    grandTotal:
-      sale.grandTotal,
-
-    receivedAmount,
-
-    changeAmount:
-      sale.changeAmount,
-
-  });
-
-/*
-======================================
-PREPARE CUSTOMER UPDATE
-======================================
-*/
-
-let customerOperation = null;
-
-if (!customerSnap.exists()) {
-
-  customerOperation = {
-
-    type: "create",
-
-    data: customerData,
-
-  };
-
-} else {
-
-  customerOperation = {
-
-    type: "update",
-
-    data:
-      buildCustomerPurchaseUpdate({
-
-        customer:
-          customerData,
-
-        billAmount:
-          sale.grandTotal,
-
-      }),
-
-  };
-
-}
-
-/*
-======================================
-PREPARE STOCK UPDATES
-======================================
-*/
-
-const stockOperations = [];
-
-for (const productInfo of productSnapshots) {
-
-  const {
-    item,
-    product,
-    productRef,
-  } = productInfo;
-
-  const {
-    updatedProduct,
-    history,
-  } = prepareStockUpdate(
-
-    product,
-
-    item
-
-  );
-
-  stockOperations.push({
-
-    productRef,
-
-    updatedProduct,
-
-    history: {
-
-      invoiceNumber,
-
-      cashier,
-
-      ...history,
-
-    },
-
-  });
-
-}
-
-/*
-======================================
-PREPARE DAILY REPORT
-======================================
-*/
-
-const totalProfit =
-  sale.totalProfit;
-
-const totalItems =
-  sale.totalQuantity;
-
-let reportOperation;
-
-if (!reportSnap.exists()) {
-
-  reportOperation = {
-
-    type: "create",
-
-    data:
-      buildNewDailyReport({
-
-        grandTotal:
-          sale.grandTotal,
-
-        totalProfit,
-
+      /*
+      ======================================
+      DAILY REPORT
+      ======================================
+      */
+
+      const reportRef = getDailyReportRef();
+
+      const reportSnap = await transaction.get(reportRef);
+
+      /*
+      ======================================
+      BUILD SALE
+      ======================================
+      */
+
+      const sale = buildSaleDocument({
+        invoiceNumber,
+
+        customer: {
+          mobile: customer.mobile,
+          name: customer.name,
+        },
+
+        cart,
+        billSummary,
         paymentMethod,
+        receivedAmount,
+        cashier,
+      });
 
-        totalItems,
+      /*
+      ======================================
+      BUILD PAYMENT
+      ======================================
+      */
 
-      }),
-
-  };
-
-} else {
-
-  reportOperation = {
-
-    type: "update",
-
-    data:
-      buildUpdatedDailyReport({
-
-        report:
-          reportSnap.data(),
-
-        grandTotal:
-          sale.grandTotal,
-
-        totalProfit,
-
+      const payment = buildPaymentDocument({
+        invoiceNumber,
         paymentMethod,
+        grandTotal: sale.grandTotal,
+        receivedAmount,
+        changeAmount: sale.changeAmount,
+      });
 
-        totalItems,
+      /*
+      ======================================
+      PREPARE CUSTOMER UPDATE
+      ======================================
+      */
 
-      }),
+      let customerOperation = null;
 
-  };
+      if (!customerSnap.exists()) {
 
-}
+        customerOperation = {
+          type: "create",
+          data: customerData,
+        };
 
-/*
-======================================
-UPDATE INVOICE
-======================================
-*/
+      } else {
 
-transaction.update(
-  invoiceRef,
-  {
-    lastNumber: nextNumber,
-  }
-);
+        customerOperation = {
+          type: "update",
 
-/*
-======================================
-SAVE CUSTOMER
-======================================
-*/
+          data: buildCustomerPurchaseUpdate({
+            customer: customerData,
+            billAmount: sale.grandTotal,
+          }),
+        };
 
-if (customerOperation.type === "create") {
+      }
 
-  transaction.set(
-    customerRef,
-    customerOperation.data
-  );
+      /*
+      ======================================
+      PREPARE STOCK UPDATES
+      ======================================
+      */
 
-} else {
+      const stockOperations = [];
 
-  transaction.update(
-    customerRef,
-    customerOperation.data
-  );
+      for (const productInfo of productSnapshots) {
 
-}
+        const {
+          item,
+          product,
+          productRef,
+        } = productInfo;
 
-/*
-======================================
-UPDATE PRODUCTS
-======================================
-*/
+        const {
+          updatedProduct,
+          history,
+        } = prepareStockUpdate(
+          product,
+          item
+        );
 
-for (const operation of stockOperations) {
+        stockOperations.push({
+          productRef,
+          updatedProduct,
 
-  transaction.update(
-    operation.productRef,
-    operation.updatedProduct
-  );
+          history: {
+            invoiceNumber,
+            cashier,
+            ...history,
+          },
+        });
 
-}
+      }
 
-/*
-======================================
-SAVE INVENTORY HISTORY
-======================================
-*/
+      /*
+      ======================================
+      PREPARE DAILY REPORT
+      ======================================
+      */
 
-for (const operation of stockOperations) {
+      const totalProfit = sale.totalProfit;
+      const totalItems = sale.totalQuantity;
 
-  transaction.set(
+      let reportOperation;
 
-    getInventoryHistoryRef(),
+      if (!reportSnap.exists()) {
 
-    operation.history
+        reportOperation = {
+          type: "create",
 
-  );
+          data: buildNewDailyReport({
+            grandTotal: sale.grandTotal,
+            totalProfit,
+            paymentMethod,
+            totalItems,
+          }),
+        };
 
-}
+      } else {
 
-/*
-======================================
-SAVE SALE
-======================================
-*/
+        reportOperation = {
+          type: "update",
 
-transaction.set(
+          data: buildUpdatedDailyReport({
+            report: reportSnap.data(),
+            grandTotal: sale.grandTotal,
+            totalProfit,
+            paymentMethod,
+            totalItems,
+          }),
+        };
 
-  getSaleRef(invoiceNumber),
+      }
 
-  sale
+      /*
+      ======================================
+      UPDATE INVOICE COUNTER
+      ======================================
+      */
 
-);
+      // If Print already reserved the invoice number,
+      // do not increment the counter again.
+      //
+      // Otherwise, generate the next number here.
 
-/*
-======================================
-SAVE PAYMENT
-======================================
-*/
+      if (!reservedInvoiceNumber) {
 
-transaction.set(
+        transaction.update(invoiceRef, {
+          lastNumber: nextNumber,
+        });
 
-  getPaymentRef(invoiceNumber),
+      }
 
-  payment
+      /*
+      ======================================
+      SAVE CUSTOMER
+      ======================================
+      */
 
-);
+      if (customerOperation.type === "create") {
 
-/*
-======================================
-UPDATE DAILY REPORT
-======================================
-*/
+        transaction.set(
+          customerRef,
+          customerOperation.data
+        );
 
-if (reportOperation.type === "create") {
+      } else {
 
-  transaction.set(
+        transaction.update(
+          customerRef,
+          customerOperation.data
+        );
 
-    reportRef,
+      }
 
-    reportOperation.data
+      /*
+      ======================================
+      UPDATE PRODUCTS
+      ======================================
+      */
 
-  );
+      for (const operation of stockOperations) {
 
-} else {
+        transaction.update(
+          operation.productRef,
+          operation.updatedProduct
+        );
 
-  transaction.update(
+      }
 
-    reportRef,
+      /*
+      ======================================
+      SAVE INVENTORY HISTORY
+      ======================================
+      */
 
-    reportOperation.data
+      for (const operation of stockOperations) {
 
-  );
+        transaction.set(
+          getInventoryHistoryRef(),
+          operation.history
+        );
 
-}
+      }
 
-/*
-======================================
-TRANSACTION COMPLETE
-======================================
-*/
+      /*
+      ======================================
+      SAVE SALE
+      ======================================
+      */
 
-return {
+      transaction.set(
+        saleRef,
+        sale
+      );
 
-  success: true,
+      /*
+      ======================================
+      SAVE PAYMENT
+      ======================================
+      */
 
-  invoiceNumber,
+      transaction.set(
+        getPaymentRef(invoiceNumber),
+        payment
+      );
 
-  sale,
+      /*
+      ======================================
+      UPDATE DAILY REPORT
+      ======================================
+      */
 
-  payment,
+      if (reportOperation.type === "create") {
 
-};
+        transaction.set(
+          reportRef,
+          reportOperation.data
+        );
 
-/*
-======================================
-END TRANSACTION
-======================================
-*/
+      } else {
+
+        transaction.update(
+          reportRef,
+          reportOperation.data
+        );
+
+      }
+
+      /*
+      ======================================
+      TRANSACTION COMPLETE
+      ======================================
+      */
+
+      return {
+        success: true,
+        invoiceNumber,
+        sale,
+        payment,
+      };
 
     }
-
   );
-
 };
