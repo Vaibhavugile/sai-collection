@@ -131,3 +131,46 @@
     padding: 0; border: 0; background: rgba(39, 31, 20, .34); backdrop-filter: blur(2px);
   }
 }
+/* SIGN OUT BUTTON — COMPACT */
+
+.sai-sidebar-signout {
+  flex: 0 0 46px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+  width: auto !important;
+
+  margin: 10px 12px 14px !important;
+  padding: 0 12px !important;
+
+  border-radius: 12px !important;
+  color: #c65353 !important;
+  background: transparent !important;
+
+  transition: background 0.25s ease, color 0.25s ease !important;
+}
+
+.sai-sidebar-signout .MuiListItemIcon-root {
+  color: #c65353 !important;
+  min-width: 42px !important;
+}
+
+.sai-sidebar-signout:hover {
+  background: rgba(198, 83, 83, 0.09) !important;
+}
+
+.sai-sidebar-signout .MuiListItemText-primary {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+.sai-sidebar.is-collapsed .sai-sidebar-signout {
+  justify-content: center !important;
+  margin-left: 8px !important;
+  margin-right: 8px !important;
+  padding: 0 !important;
+}
+
+.sai-sidebar.is-collapsed .sai-sidebar-signout .MuiListItemIcon-root {
+  min-width: 0 !important;
+}

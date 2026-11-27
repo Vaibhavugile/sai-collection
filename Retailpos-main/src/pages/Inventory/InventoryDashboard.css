@@ -255,3 +255,82 @@
     font-size: 9px;
   }
 }
+
+/* =========================================
+   INVENTORY PAGINATION
+========================================= */
+
+.inventory-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  margin-top: 16px;
+  background: #fff;
+  border: 1px solid #eee7dc;
+  border-radius: 13px;
+}
+
+.inventory-pagination-info {
+  color: #756b5e;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.inventory-pagination-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.inventory-page-button {
+  min-height: 39px;
+  padding: 0 17px;
+  border: 1px solid #e7dfd2;
+  border-radius: 9px;
+  background: #fff;
+  color: #514331;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.inventory-page-button:hover:not(:disabled) {
+  border-color: #b58a45;
+  color: #9a702e;
+  background: #fffaf1;
+}
+
+.inventory-page-button.primary {
+  background: #b58a45;
+  border-color: #b58a45;
+  color: #fff;
+}
+
+.inventory-page-button.primary:hover:not(:disabled) {
+  background: #987039;
+  border-color: #987039;
+  color: #fff;
+}
+
+.inventory-page-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .inventory-pagination {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .inventory-pagination-actions {
+    width: 100%;
+  }
+
+  .inventory-page-button {
+    flex: 1;
+  }
+}

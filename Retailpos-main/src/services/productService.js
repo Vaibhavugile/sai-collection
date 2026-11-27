@@ -15,7 +15,11 @@ import {
   writeBatch,
   limit,
 } from "firebase/firestore";
-
+import {
+  getCountFromServer,
+  startAfter,
+  where,
+} from "firebase/firestore";
 import {
   ref,
   uploadBytes,
@@ -768,4 +772,127 @@ export const getProductById = async (productId) => {
     console.error("Get product failed:", error);
     throw error;
   }
+};
+
+/* =========================================================
+   INVENTORY SERVER-SIDE PAGINATION
+   100 PRODUCTS PER PAGE
+========================================================= */
+
+const INVENTORY_PAGE_SIZE = 100;
+
+const buildInventoryFilters = ({
+  productCode = "",
+  categoryId = "",
+  subCategoryId = "",
+  status = "",
+} = {}) => {
+  const filters = [];
+
+  if (categoryId) {
+    filters.push(where("categoryId", "==", categoryId));
+  }
+
+  if (subCategoryId) {
+    filters.push(where("subCategoryId", "==", subCategoryId));
+  }
+
+  if (status) {
+    filters.push(where("status", "==", status));
+  }
+
+  const code = String(productCode).trim().toUpperCase();
+
+  if (code) {
+    filters.push(where("productCode", ">=", code));
+    filters.push(where("productCode", "<=", code + "\uf8ff"));
+  }
+
+  return filters;
+};
+
+/**
+ * Fetch one page of inventory products.
+ *
+ * Product-code search supports prefix matching.
+ * Example: P00012 finds P000120, P000121, etc.
+ */
+export const fetchInventoryProductsPage = async ({
+  pageSize = INVENTORY_PAGE_SIZE,
+  cursor = null,
+  productCode = "",
+  categoryId = "",
+  subCategoryId = "",
+  status = "",
+} = {}) => {
+  const filters = buildInventoryFilters({
+    productCode,
+    categoryId,
+    subCategoryId,
+    status,
+  });
+
+  const codeSearch = String(productCode).trim();
+
+  const constraints = [...filters];
+
+  if (codeSearch) {
+    constraints.push(orderBy("productCode", "asc"));
+  } else {
+    constraints.push(orderBy("createdAt", "desc"));
+  }
+
+  if (cursor) {
+    constraints.push(startAfter(cursor));
+  }
+
+  constraints.push(limit(pageSize));
+
+  const inventoryQuery = query(
+    productsCollection,
+    ...constraints
+  );
+
+  const snapshot = await getDocs(inventoryQuery);
+
+  const products = snapshot.docs.map((item) => ({
+    id: item.id,
+    ...item.data(),
+  }));
+
+  return {
+    products,
+    lastVisible:
+      snapshot.docs.length > 0
+        ? snapshot.docs[snapshot.docs.length - 1]
+        : null,
+    hasMore: snapshot.docs.length === pageSize,
+  };
+};
+
+/**
+ * Get the total number of matching products.
+ * Uses Firestore aggregation instead of downloading documents.
+ */
+export const getInventoryProductsCount = async ({
+  productCode = "",
+  categoryId = "",
+  subCategoryId = "",
+  status = "",
+} = {}) => {
+  const filters = buildInventoryFilters({
+    productCode,
+    categoryId,
+    subCategoryId,
+    status,
+  });
+
+  const countQuery = query(
+    productsCollection,
+    ...filters
+  );
+
+  const snapshot = await getCountFromServer(countQuery);
+
+  return snapshot.data().count || 0;
 };

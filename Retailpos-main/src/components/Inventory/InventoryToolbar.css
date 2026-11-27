@@ -151,3 +151,118 @@
   .toolbar-actions { width: 100%; }
   .refresh-btn { width: 100%; }
 }
+
+/* Product code search clear button */
+
+.inventory-search-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 27px;
+  height: 27px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background: #f3eee5;
+  color: #78694f;
+  cursor: pointer;
+}
+
+.inventory-search-clear:hover {
+  background: #e9dfce;
+  color: #9b7135;
+}
+
+.inventory-search-clear svg {
+  font-size: 17px;
+}
+
+/* Active filters indicator */
+
+.inventory-active-filters {
+  color: #9a753c;
+  background: #fbf5e9;
+  border: 1px solid #eee2cb;
+  border-radius: 8px;
+  padding: 8px 11px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .inventory-toolbar-heading {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .inventory-toolbar-heading .add-product-btn {
+    white-space: nowrap;
+  }
+
+  .inventory-active-filters {
+    display: none;
+  }
+}
+/* Search submit button */
+.inventory-search-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #b58a45;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.inventory-search-submit:hover {
+  background: #967039;
+  transform: translateY(-1px);
+}
+
+.inventory-search-submit svg {
+  font-size: 18px;
+}
+
+.inventory-search-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: #81796d;
+  cursor: pointer;
+}
+
+.inventory-search-clear:hover {
+  color: #b58a45;
+}
+
+.inventory-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inventory-search-wrap .search-input {
+  min-width: 0;
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .inventory-search-submit {
+    padding: 0 10px;
+  }
+
+  .inventory-search-submit span {
+    display: none;
+  }
+}

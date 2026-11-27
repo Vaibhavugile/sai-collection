@@ -1,4 +1,9 @@
+
 import { useState } from "react";
+import { useNavigate, NavLink } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase"; // Adjust path if needed
+
 import {
   DashboardRounded,
   CategoryRounded,
@@ -7,14 +12,11 @@ import {
   ReceiptLongRounded,
   AssessmentRounded,
   PeopleRounded,
-  SettingsRounded,
-  LocalOfferRounded,
-  PaletteRounded,
   StraightenRounded,
   StoreRounded,
-  MenuRounded,
   ChevronLeftRounded,
   CloseRounded,
+  LogoutRounded,
 } from "@mui/icons-material";
 
 import {
@@ -29,7 +31,6 @@ import {
   Tooltip,
 } from "@mui/material";
 
-import { NavLink } from "react-router-dom";
 import "./Sidebar.css";
 
 const menus = [
@@ -46,22 +47,46 @@ const menus = [
   { title: "Customers", icon: <PeopleRounded />, path: "/customers" },
   { header: "INSIGHTS" },
   { title: "Reports", icon: <AssessmentRounded />, path: "/reports" },
-  
 ];
 
-export default function Sidebar({ open = false, onClose, onCollapseChange }) {
+export default function Sidebar({
+  open = false,
+  onClose,
+  onCollapseChange,
+}) {
+  const navigate = useNavigate();
+
   const [collapsed, setCollapsed] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
   const toggleCollapsed = () => {
     setCollapsed((current) => {
       const next = !current;
-      if (typeof onCollapseChange === "function") onCollapseChange(next);
+      onCollapseChange?.(next);
       return next;
     });
   };
 
   const closeMobile = () => {
-    if (typeof onClose === "function") onClose();
+    onClose?.();
+  };
+
+  const handleSignOut = async () => {
+    if (signingOut) return;
+
+    try {
+      setSigningOut(true);
+
+      await signOut(auth);
+
+      closeMobile();
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("Sign out failed:", error);
+      window.alert("Unable to sign out. Please try again.");
+    } finally {
+      setSigningOut(false);
+    }
   };
 
   return (
@@ -74,7 +99,11 @@ export default function Sidebar({ open = false, onClose, onCollapseChange }) {
         tabIndex={open ? 0 : -1}
       />
 
-      <Box className={`sai-sidebar ${collapsed ? "is-collapsed" : ""} ${open ? "is-open" : ""}`}>
+      <Box
+        className={`sai-sidebar ${
+          collapsed ? "is-collapsed" : ""
+        } ${open ? "is-open" : ""}`}
+      >
         <Box className="sai-sidebar-brand">
           <img
             src="/assets/sai-collection-logo.png"
@@ -84,8 +113,12 @@ export default function Sidebar({ open = false, onClose, onCollapseChange }) {
 
           {!collapsed && (
             <Box className="sai-sidebar-brand-copy">
-              <Typography className="sai-sidebar-brand-name">Sai Collection</Typography>
-              <Typography className="sai-sidebar-brand-location">LATUR · MAHARASHTRA</Typography>
+              <Typography className="sai-sidebar-brand-name">
+                Sai Collection
+              </Typography>
+              <Typography className="sai-sidebar-brand-location">
+                LATUR · MAHARASHTRA
+              </Typography>
             </Box>
           )}
 
@@ -117,11 +150,17 @@ export default function Sidebar({ open = false, onClose, onCollapseChange }) {
           {menus.map((item, index) => {
             if (item.header) {
               return !collapsed ? (
-                <Typography key={`${item.header}-${index}`} className="sai-sidebar-section-label">
+                <Typography
+                  key={`${item.header}-${index}`}
+                  className="sai-sidebar-section-label"
+                >
                   {item.header}
                 </Typography>
               ) : (
-                <Box key={`${item.header}-${index}`} className="sai-sidebar-section-divider" />
+                <Box
+                  key={`${item.header}-${index}`}
+                  className="sai-sidebar-section-divider"
+                />
               );
             }
 
@@ -131,16 +170,27 @@ export default function Sidebar({ open = false, onClose, onCollapseChange }) {
                 to={item.path}
                 end={item.path === "/dashboard"}
                 onClick={closeMobile}
-                className={({ isActive }) => `sai-sidebar-item${isActive ? " active" : ""}`}
+                className={({ isActive }) =>
+                  `sai-sidebar-item${isActive ? " active" : ""}`
+                }
               >
                 <ListItemIcon>{item.icon}</ListItemIcon>
+
                 {!collapsed && <ListItemText primary={item.title} />}
-                {!collapsed && item.path === "/dashboard" && <span className="sai-sidebar-active-dot" />}
+
+                {!collapsed && item.path === "/dashboard" && (
+                  <span className="sai-sidebar-active-dot" />
+                )}
               </ListItemButton>
             );
 
             return (
-              <Tooltip key={item.path} title={collapsed ? item.title : ""} placement="right" arrow>
+              <Tooltip
+                key={item.path}
+                title={collapsed ? item.title : ""}
+                placement="right"
+                arrow
+              >
                 {link}
               </Tooltip>
             );
@@ -149,14 +199,48 @@ export default function Sidebar({ open = false, onClose, onCollapseChange }) {
 
         <Box className="sai-sidebar-footer">
           <img src="/assets/sai-collection-logo.png" alt="" />
+
           {!collapsed && (
             <Box className="sai-sidebar-footer-copy">
-              <Typography className="sai-sidebar-footer-title">Sai Collection</Typography>
-              <Typography className="sai-sidebar-footer-subtitle">Retail management</Typography>
+              <Typography className="sai-sidebar-footer-title">
+                Sai Collection
+              </Typography>
+              <Typography className="sai-sidebar-footer-subtitle">
+                Retail management
+              </Typography>
             </Box>
           )}
-          {!collapsed && <span className="sai-sidebar-footer-version">v1.0</span>}
+
+          {!collapsed && (
+            <span className="sai-sidebar-footer-version">v1.0</span>
+          )}
         </Box>
+
+        {/* SIGN OUT */}
+        <Divider className="sai-sidebar-divider" />
+
+        <Tooltip
+          title={collapsed ? "Sign Out" : ""}
+          placement="right"
+          arrow
+        >
+          <ListItemButton
+            className="sai-sidebar-signout"
+            onClick={handleSignOut}
+            disabled={signingOut}
+            aria-label="Sign out"
+          >
+            <ListItemIcon>
+              <LogoutRounded />
+            </ListItemIcon>
+
+            {!collapsed && (
+              <ListItemText
+                primary={signingOut ? "Signing out..." : "Sign Out"}
+              />
+            )}
+          </ListItemButton>
+        </Tooltip>
       </Box>
     </>
   );
