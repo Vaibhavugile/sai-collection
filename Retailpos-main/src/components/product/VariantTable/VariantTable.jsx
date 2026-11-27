@@ -29,6 +29,24 @@ export default function VariantTable({ product, setProduct }) {
 
   const variants = product?.variants || [];
 
+  // -----------------------------------------
+  // PREVENT ACCIDENTAL NUMBER CHANGES
+  // -----------------------------------------
+
+  const preventNumberChange = (e) => {
+    if (e.type === "wheel") {
+      e.preventDefault();
+      e.currentTarget.blur();
+      return;
+    }
+
+    if (
+      ["ArrowUp", "ArrowDown", "PageUp", "PageDown"].includes(e.key)
+    ) {
+      e.preventDefault();
+    }
+  };
+
   const updateVariant = (index, field, value) => {
     if (isView) return;
 
@@ -230,7 +248,9 @@ export default function VariantTable({ product, setProduct }) {
                           <strong>
                             {variant.variantName || "Default Variant"}
                           </strong>
-                          <span>Variant {String(index + 1).padStart(2, "0")}</span>
+                          <span>
+                            Variant {String(index + 1).padStart(2, "0")}
+                          </span>
                         </div>
                       </div>
                     </td>
@@ -262,6 +282,8 @@ export default function VariantTable({ product, setProduct }) {
                           value={variant[field] ?? ""}
                           readOnly={isView}
                           aria-label={`${variant.variantName || "Variant"} ${field}`}
+                          onWheel={preventNumberChange}
+                          onKeyDown={preventNumberChange}
                           onChange={(e) =>
                             updateVariant(
                               index,
@@ -365,6 +387,8 @@ export default function VariantTable({ product, setProduct }) {
                     step="any"
                     placeholder="Enter value"
                     value={bulk[item.field]}
+                    onWheel={preventNumberChange}
+                    onKeyDown={preventNumberChange}
                     onChange={(e) =>
                       handleBulkChange(item.field, e.target.value)
                     }

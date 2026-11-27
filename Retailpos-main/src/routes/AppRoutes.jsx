@@ -35,6 +35,7 @@ import OrdersDashboard from "../pages/Orders/OrdersDashboard";
 import FinanceDashboard from "../pages/Finance/FinanceDashboard";
 import ProductEditHistory from "../pages/Products/ProductEditHistory";
 import CustomersDashboard from "../pages/Customers/CustomersDashboard";
+import VariantDefaults from "../pages/Variants/VariantDefaults";
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -117,7 +118,7 @@ export default function AppRoutes() {
   path="/customers"
   element={<CustomersDashboard />}
 />
-
+<Route path="/sizes" element={<VariantDefaults />} />
             {/* ==========================================
                 CATEGORIES
             ========================================== */}

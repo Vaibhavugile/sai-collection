@@ -1,9 +1,5 @@
 
-import {
-  useEffect,
-  useState,
-} from "react";
-
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./AddProduct.css";
@@ -58,9 +54,9 @@ export default function AddProduct() {
     status: "active",
   });
 
-  /* =====================================================
-     LOAD PRODUCT CODE
-  ===================================================== */
+  // -----------------------------------------
+  // LOAD PRODUCT CODE
+  // -----------------------------------------
 
   useEffect(() => {
     let mounted = true;
@@ -93,38 +89,42 @@ export default function AddProduct() {
     };
   }, []);
 
-  /* =====================================================
-     SAVE PRODUCT
-  ===================================================== */
+  // -----------------------------------------
+  // SAVE PRODUCT
+  // -----------------------------------------
 
   const handleSaveProduct = async () => {
-    if (loading) return;
+    if (loading || codeLoading) return;
 
     try {
       setLoading(true);
 
+      // Save product to Firebase
       const productCode = await addProduct(product);
 
-      alert(
-        `Product ${productCode} created successfully.`
-      );
+      // Navigate only after successful save
+      navigate("/inventory", {
+        replace: true,
+        state: {
+          productSaved: true,
+          savedProductCode: productCode,
+        },
+      });
 
-      // Stay on the page so the user can print the barcode
-      // or continue working with the product.
     } catch (error) {
       console.error("Product save failed:", error);
 
       alert(
         error?.message || "Failed to save product. Please try again."
       );
-    } finally {
+
       setLoading(false);
     }
   };
 
-  /* =====================================================
-     CANCEL
-  ===================================================== */
+  // -----------------------------------------
+  // CANCEL
+  // -----------------------------------------
 
   const handleCancel = () => {
     if (loading) return;
@@ -132,23 +132,14 @@ export default function AddProduct() {
     navigate("/inventory");
   };
 
-  /* =====================================================
-     RENDER
-  ===================================================== */
-
   return (
     <main className="add-product-page">
-
       <div className="add-product-container">
 
-        {/* ==========================================
-            TOP INTRODUCTION
-        ========================================== */}
+        {/* TOP INTRODUCTION */}
 
         <section className="add-product-intro">
-
           <div className="add-product-intro-content">
-
             <div className="add-product-breadcrumb">
               <StorefrontOutlined />
               <span>SAI COLLECTION</span>
@@ -157,7 +148,6 @@ export default function AddProduct() {
             </div>
 
             <div className="add-product-title-row">
-
               <div className="add-product-title-icon">
                 <AddCircleOutlineRounded />
               </div>
@@ -174,37 +164,27 @@ export default function AddProduct() {
                   manage your inventory.
                 </p>
               </div>
-
             </div>
-
           </div>
 
           <div className="add-product-intro-decoration">
             <Inventory2Outlined />
           </div>
-
         </section>
 
-        {/* ==========================================
-            PRODUCT HEADER
-        ========================================== */}
+        {/* PRODUCT HEADER */}
 
         <div className="add-product-header-wrap">
           <ProductHeader
             productCode={
-              codeLoading
-                ? "Generating..."
-                : product.productCode
+              codeLoading ? "Generating..." : product.productCode
             }
           />
         </div>
 
-        {/* ==========================================
-            PRODUCT FORM CONTENT
-        ========================================== */}
+        {/* PRODUCT FORM */}
 
         <div className="add-product-content">
-
           <div className="add-product-section-heading">
             <div>
               <span>PRODUCT CONFIGURATION</span>
@@ -216,16 +196,12 @@ export default function AddProduct() {
             </div>
           </div>
 
-          {/* BASIC INFORMATION */}
-
           <section className="add-product-section">
             <ProductBasicInfo
               product={product}
               setProduct={setProduct}
             />
           </section>
-
-          {/* PRODUCT IMAGES */}
 
           {/*
           <section className="add-product-section">
@@ -236,16 +212,12 @@ export default function AddProduct() {
           </section>
           */}
 
-          {/* CATEGORY */}
-
           <section className="add-product-section">
             <ProductCategory
               product={product}
               setProduct={setProduct}
             />
           </section>
-
-          {/* VARIANT GENERATOR */}
 
           <section className="add-product-section">
             <VariantGenerator
@@ -254,8 +226,6 @@ export default function AddProduct() {
             />
           </section>
 
-          {/* VARIANT TABLE */}
-
           <section className="add-product-section">
             <VariantTable
               product={product}
@@ -263,45 +233,37 @@ export default function AddProduct() {
             />
           </section>
 
-          {/* VALIDATION */}
-
           <section className="add-product-section add-product-validation-section">
-            <ProductValidation
-              product={product}
-            />
+            <ProductValidation product={product} />
           </section>
-
-          {/* BARCODE */}
 
           <section className="add-product-section">
-            <BarcodePrint
-              product={product}
-            />
+            <BarcodePrint product={product} />
           </section>
-
         </div>
 
-        {/* ==========================================
-            FOOTER ACTIONS
-        ========================================== */}
+        {/* FOOTER ACTIONS */}
 
         <footer className="product-page-footer">
-
           <div className="product-footer-information">
             <div className="product-footer-icon">
               <CheckCircleOutlineRounded />
             </div>
 
             <div>
-              <strong>Almost ready?</strong>
+              <strong>
+                {loading ? "Saving your product..." : "Almost ready?"}
+              </strong>
+
               <span>
-                Review your product details before saving.
+                {loading
+                  ? "Please wait. Your product is being saved to inventory."
+                  : "Review your product details before saving."}
               </span>
             </div>
           </div>
 
           <div className="product-footer-actions">
-
             <button
               type="button"
               className="cancel-btn"
@@ -330,18 +292,14 @@ export default function AddProduct() {
                 </>
               )}
             </button>
-
           </div>
-
         </footer>
 
         <div className="add-product-bottom-note">
           <span>SAI COLLECTION</span>
           <span>Inventory Management · Latur</span>
         </div>
-
       </div>
-
     </main>
   );
 }

@@ -37,8 +37,6 @@ const menus = [
   { header: "PRODUCTS" },
   { title: "Categories", icon: <CategoryRounded />, path: "/categories" },
   { title: "Sub Categories", icon: <Inventory2Rounded />, path: "/subcategories" },
-  { title: "Brands", icon: <LocalOfferRounded />, path: "/brands" },
-  { title: "Colours", icon: <PaletteRounded />, path: "/colors" },
   { title: "Sizes", icon: <StraightenRounded />, path: "/sizes" },
   { title: "Products", icon: <StoreRounded />, path: "/inventory" },
   { header: "PURCHASE" },
@@ -48,9 +46,7 @@ const menus = [
   { title: "Customers", icon: <PeopleRounded />, path: "/customers" },
   { header: "INSIGHTS" },
   { title: "Reports", icon: <AssessmentRounded />, path: "/reports" },
-  { header: "PREFERENCES" },
-  { title: "Users", icon: <PeopleRounded />, path: "/users" },
-  { title: "Settings", icon: <SettingsRounded />, path: "/settings" },
+  
 ];
 
 export default function Sidebar({ open = false, onClose, onCollapseChange }) {
