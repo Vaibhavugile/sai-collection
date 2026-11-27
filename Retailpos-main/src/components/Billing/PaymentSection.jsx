@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./PaymentSection.css";
 import { completeSale } from "../../services/checkoutService";
 
@@ -18,15 +18,37 @@ export default function PaymentSection({
 }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
+  const [hasEditedReceived, setHasEditedReceived] = useState(false);
 
-  const grandTotal = Number(billSummary?.grandTotal || 0);
-  const received = Number(receivedAmount || 0);
+  const grandTotal = Math.max(0, Number(billSummary?.grandTotal || 0));
+  const received = Math.max(0, Number.parseInt(receivedAmount || "0", 10) || 0);
+
+  // Default to the payable amount until the cashier edits it.
+  useEffect(() => {
+    if (!cart?.length) {
+      setHasEditedReceived(false);
+      return;
+    }
+
+    if (!hasEditedReceived) {
+      setReceivedAmount(String(Math.ceil(grandTotal)));
+    }
+  }, [cart?.length, grandTotal, hasEditedReceived, setReceivedAmount]);
 
   const change = Math.max(received - grandTotal, 0);
   const balance = Math.max(grandTotal - received, 0);
 
   const formatAmount = (amount) =>
-    `₹ ${Number(amount || 0).toFixed(2)}`;
+    `₹ ${Number(amount || 0).toLocaleString("en-IN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+
+  const handleReceivedAmountChange = (event) => {
+    const digitsOnly = event.target.value.replace(/\D/g, "");
+    setHasEditedReceived(true);
+    setReceivedAmount(digitsOnly);
+  };
 
   // =========================================================
   // PRINT THERMAL RECEIPT - DYNAMIC 80MM HEIGHT
@@ -664,13 +686,20 @@ export default function PaymentSection({
 
           <input
             id="payment-received"
-            type="number"
-            min="0"
-            step="0.01"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            autoComplete="off"
             placeholder="Enter received amount"
-            value={receivedAmount}
+            value={receivedAmount ?? ""}
             disabled={isProcessing}
-            onChange={(e) => setReceivedAmount(e.target.value)}
+            onChange={handleReceivedAmountChange}
+            onWheel={(event) => event.currentTarget.blur()}
+            onKeyDown={(event) => {
+              if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                event.preventDefault();
+              }
+            }}
           />
         </div>
 
@@ -679,7 +708,7 @@ export default function PaymentSection({
             type="button"
             className="exact-amount-btn"
             disabled={isProcessing}
-            onClick={() => setReceivedAmount(String(grandTotal))}
+            onClick={() => { setHasEditedReceived(true); setReceivedAmount(String(Math.ceil(grandTotal))); }}
           >
             Use exact amount ({formatAmount(grandTotal)})
           </button>

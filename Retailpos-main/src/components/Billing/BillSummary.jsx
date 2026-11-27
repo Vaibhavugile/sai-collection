@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./BillSummary.css";
 import { calculateBill } from "../../utils/billingCalculator";
 
@@ -9,38 +9,60 @@ export default function BillSummary({
   billDiscount,
   setBillDiscount,
 }) {
-  const [discountType, setDiscountType] = useState("fixed");
+  const [percentDiscount, setPercentDiscount] = useState(0);
+  const [fixedDiscount, setFixedDiscount] = useState(0);
 
-  const currencySymbol =
-    billingSettings?.currencySymbol || "₹";
+  const currencySymbol = billingSettings?.currencySymbol || "₹";
+  const discountEnabled = billingSettings?.discountEnabled ?? true;
+  const gstEnabled = billingSettings?.gstEnabled ?? false;
 
-  const discountEnabled =
-    billingSettings?.discountEnabled ?? true;
-
-  const gstEnabled =
-    billingSettings?.gstEnabled ?? false;
-
-  // Calculate subtotal first, before applying discount.
-  const initialBill = calculateBill({
-    cart,
-    billDiscount: 0,
-    billingSettings,
-  });
-
-  const subtotal = Number(initialBill.subtotal) || 0;
-
-  // Convert percentage discount into a fixed amount.
-  const discountValue = Math.max(
-    0,
-    Number(billDiscount) || 0
+  const initialBill = useMemo(
+    () =>
+      calculateBill({
+        cart,
+        billDiscount: 0,
+        billingSettings,
+      }),
+    [cart, billingSettings]
   );
 
-  const calculatedDiscount =
-    discountType === "percent"
-      ? Math.min((subtotal * Math.min(discountValue, 100)) / 100, subtotal)
-      : Math.min(discountValue, subtotal);
+  const subtotal = Math.max(
+    0,
+    Math.round(Number(initialBill.subtotal) || 0)
+  );
 
-  // Pass calculated fixed discount to existing calculator.
+  // Percentage discount rounded to whole rupees.
+  const percentageAmount = Math.min(
+    Math.round((subtotal * percentDiscount) / 100),
+    subtotal
+  );
+
+  // Flat discount is applied after percentage discount.
+  const remainingAfterPercentage = Math.max(
+    0,
+    subtotal - percentageAmount
+  );
+
+  const appliedFixedDiscount = Math.min(
+    fixedDiscount,
+    remainingAfterPercentage
+  );
+
+  const combinedDiscount = Math.min(
+    percentageAmount + appliedFixedDiscount,
+    subtotal
+  );
+
+  const bill = useMemo(
+    () =>
+      calculateBill({
+        cart,
+        billDiscount: combinedDiscount,
+        billingSettings,
+      }),
+    [cart, combinedDiscount, billingSettings]
+  );
+
   const {
     totalProducts,
     totalQuantity,
@@ -49,38 +71,56 @@ export default function BillSummary({
     gst,
     taxableAmount,
     grandTotal,
-  } = calculateBill({
-    cart,
-    billDiscount: calculatedDiscount,
-    billingSettings,
-  });
+  } = bill;
+
+  // Send combined discount to the existing billing flow.
+  useEffect(() => {
+    setBillDiscount(combinedDiscount);
+  }, [combinedDiscount, setBillDiscount]);
+
+  // Reset discount inputs after checkout resets the parent value.
+  useEffect(() => {
+    if (Number(billDiscount) === 0) {
+      setPercentDiscount(0);
+      setFixedDiscount(0);
+    }
+  }, [billDiscount]);
 
   const formatAmount = (amount) =>
     `${currencySymbol} ${Number(amount || 0).toFixed(2)}`;
 
-  const handleDiscountChange = (e) => {
-    const value = e.target.value;
-
+  // Whole-number input handling.
+  const handleWholeNumber = (value, setter, max) => {
     if (value === "") {
-      setBillDiscount(0);
+      setter(0);
       return;
     }
 
-    const numericValue = Number(value);
+    const numericValue = Number.parseInt(value, 10);
 
     if (!Number.isFinite(numericValue)) return;
 
-    const maxValue =
-      discountType === "percent" ? 100 : subtotal;
-
-    setBillDiscount(
-      Math.min(Math.max(numericValue, 0), maxValue)
+    setter(
+      Math.min(
+        Math.max(numericValue, 0),
+        max
+      )
     );
   };
 
-  const handleDiscountTypeChange = (type) => {
-    setDiscountType(type);
-    setBillDiscount(0);
+  // Prevent accidental mouse-wheel and arrow-key changes.
+  const preventNumberScroll = (event) => {
+    if (event.type === "wheel") {
+      event.preventDefault();
+      event.currentTarget.blur();
+    }
+
+    if (
+      event.type === "keydown" &&
+      ["ArrowUp", "ArrowDown"].includes(event.key)
+    ) {
+      event.preventDefault();
+    }
   };
 
   return (
@@ -100,10 +140,8 @@ export default function BillSummary({
 
       {/* Statistics */}
       <div className="summary-stats">
-
         <div className="summary-stat">
           <span className="summary-stat-icon">▦</span>
-
           <div>
             <span>Total Products</span>
             <strong>{totalProducts}</strong>
@@ -112,13 +150,11 @@ export default function BillSummary({
 
         <div className="summary-stat">
           <span className="summary-stat-icon">▤</span>
-
           <div>
             <span>Total Quantity</span>
             <strong>{totalQuantity}</strong>
           </div>
         </div>
-
       </div>
 
       {/* Amount Details */}
@@ -134,73 +170,93 @@ export default function BillSummary({
 
             <div className="summary-discount-heading">
               <span>Bill Discount</span>
-              <small>Optional</small>
+              <small>Optional · Whole numbers only</small>
             </div>
 
-            {/* Discount Type Selector */}
-            <div className="discount-type-selector">
+            <div className="discount-input-group">
 
-              <button
-                type="button"
-                className={
-                  discountType === "fixed"
-                    ? "discount-type-btn active"
-                    : "discount-type-btn"
-                }
-                onClick={() =>
-                  handleDiscountTypeChange("fixed")
-                }
-              >
-                ₹ Fixed
-              </button>
+              {/* Percentage Discount */}
+              <label className="discount-field-label">
+                <span>Percentage discount</span>
 
-              <button
-                type="button"
-                className={
-                  discountType === "percent"
-                    ? "discount-type-btn active"
-                    : "discount-type-btn"
-                }
-                onClick={() =>
-                  handleDiscountTypeChange("percent")
-                }
-              >
-                % Percentage
-              </button>
+                <div className="summary-discount-field">
+                  <span>%</span>
+
+                  <input
+                    type="number"
+                    className="discount-input"
+                    min="0"
+                    max="100"
+                    step="1"
+                    inputMode="numeric"
+                    value={percentDiscount}
+                    onWheel={preventNumberScroll}
+                    onKeyDown={preventNumberScroll}
+                    onChange={(e) =>
+                      handleWholeNumber(
+                        e.target.value,
+                        setPercentDiscount,
+                        100
+                      )
+                    }
+                    placeholder="0"
+                  />
+                </div>
+              </label>
+
+              {/* Additional Flat Discount */}
+              <label className="discount-field-label">
+                <span>Additional flat discount</span>
+
+                <div className="summary-discount-field">
+                  <span>{currencySymbol}</span>
+
+                  <input
+                    type="number"
+                    className="discount-input"
+                    min="0"
+                    max={remainingAfterPercentage}
+                    step="1"
+                    inputMode="numeric"
+                    value={fixedDiscount}
+                    onWheel={preventNumberScroll}
+                    onKeyDown={preventNumberScroll}
+                    onChange={(e) =>
+                      handleWholeNumber(
+                        e.target.value,
+                        setFixedDiscount,
+                        remainingAfterPercentage
+                      )
+                    }
+                    placeholder="0"
+                  />
+                </div>
+              </label>
 
             </div>
 
-            {/* Discount Input */}
-            <div className="summary-discount-field">
+            {/* Discount Breakdown */}
+            {(percentDiscount > 0 || fixedDiscount > 0) && (
+              <div className="discount-breakdown">
 
-              <span>
-                {discountType === "fixed" ? currencySymbol : "%"}
-              </span>
+                {percentDiscount > 0 && (
+                  <div>
+                    <span>{percentDiscount}% discount</span>
+                    <strong>
+                      − {formatAmount(percentageAmount)}
+                    </strong>
+                  </div>
+                )}
 
-              <input
-                type="number"
-                className="discount-input"
-                min="0"
-                max={
-                  discountType === "percent"
-                    ? 100
-                    : subtotal
-                }
-                step="0.01"
-                value={billDiscount ?? 0}
-                onChange={handleDiscountChange}
-                placeholder={
-                  discountType === "fixed"
-                    ? "Enter discount amount"
-                    : "Enter discount percentage"
-                }
-              />
+                {fixedDiscount > 0 && (
+                  <div>
+                    <span>Additional discount</span>
+                    <strong>
+                      − {formatAmount(appliedFixedDiscount)}
+                    </strong>
+                  </div>
+                )}
 
-            </div>
-
-            {discountType === "percent" && (
-              <div className="discount-calculation-hint">
-                {discountValue}% discount = {formatAmount(calculatedDiscount)}
               </div>
             )}
 
@@ -209,10 +265,10 @@ export default function BillSummary({
 
         {discountEnabled && (
           <div className="summary-row">
-            <span>Discount Applied</span>
+            <span>Total Discount Applied</span>
 
             <strong className="summary-discount-value">
-              - {formatAmount(discount)}
+              − {formatAmount(discount)}
             </strong>
           </div>
         )}

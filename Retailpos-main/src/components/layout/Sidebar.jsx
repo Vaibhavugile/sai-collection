@@ -45,6 +45,7 @@ const menus = [
   { title: "Orders", icon: <ShoppingCartRounded />, path: "/orders" },
   { header: "SALES" },
   { title: "Billing", icon: <ReceiptLongRounded />, path: "/billing" },
+  { title: "Customers", icon: <PeopleRounded />, path: "/customers" },
   { header: "INSIGHTS" },
   { title: "Reports", icon: <AssessmentRounded />, path: "/reports" },
   { header: "PREFERENCES" },

@@ -34,7 +34,7 @@ import BillingDashboard from "../pages/Billing/BillingDashboard";
 import OrdersDashboard from "../pages/Orders/OrdersDashboard";
 import FinanceDashboard from "../pages/Finance/FinanceDashboard";
 import ProductEditHistory from "../pages/Products/ProductEditHistory";
-
+import CustomersDashboard from "../pages/Customers/CustomersDashboard";
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -113,7 +113,10 @@ export default function AppRoutes() {
               path="/billing"
               element={<BillingDashboard />}
             />
-
+<Route
+  path="/customers"
+  element={<CustomersDashboard />}
+/>
 
             {/* ==========================================
                 CATEGORIES

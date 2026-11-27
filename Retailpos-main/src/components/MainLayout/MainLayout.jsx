@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { Box } from "@mui/material";
 import { Outlet, useLocation } from "react-router-dom";
@@ -16,6 +17,7 @@ const PAGE_META = [
   { match: "/sizes", title: "Sizes", subtitle: "Manage clothing sizes and variants" },
   { match: "/inventory", title: "Products", subtitle: "Manage your products and stock" },
   { match: "/orders", title: "Orders", subtitle: "Review and manage store orders" },
+  { match: "/customers", title: "Customers", subtitle: "Manage customer relationships and purchase history" },
   { match: "/billing", title: "Billing", subtitle: "Create bills and manage transactions" },
   { match: "/reports", title: "Reports", subtitle: "Understand your store performance" },
   { match: "/users", title: "Users", subtitle: "Manage your team and permissions" },
@@ -32,6 +34,7 @@ export default function MainLayout() {
       location.pathname === item.match ||
       location.pathname.startsWith(`${item.match}/`)
     );
+
     return match || {
       title: "Sai Collection",
       subtitle: "Store management workspace",
@@ -46,12 +49,19 @@ export default function MainLayout() {
   // Prevent the page behind the drawer from scrolling on mobile.
   useEffect(() => {
     if (!mobileOpen) return undefined;
+
     const previousOverflow = document.body.style.overflow;
+
     document.body.style.overflow = "hidden";
+
     const handleKeyDown = (event) => {
-      if (event.key === "Escape") setMobileOpen(false);
+      if (event.key === "Escape") {
+        setMobileOpen(false);
+      }
     };
+
     window.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
@@ -59,7 +69,11 @@ export default function MainLayout() {
   }, [mobileOpen]);
 
   return (
-    <Box className={`sai-layout ${sidebarCollapsed ? "sidebar-is-collapsed" : ""}`}>
+    <Box
+      className={`sai-layout ${
+        sidebarCollapsed ? "sidebar-is-collapsed" : ""
+      }`}
+    >
       <Sidebar
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}

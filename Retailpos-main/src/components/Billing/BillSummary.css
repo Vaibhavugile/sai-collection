@@ -348,3 +348,67 @@
   font-weight: 650;
   text-align: right;
 }
+
+/* Combined percentage + fixed discount */
+
+.discount-input-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.discount-field-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  color: #776b59;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.discount-field-label .summary-discount-field {
+  width: 100%;
+  height: 39px;
+  background: #fffdf9;
+}
+
+.discount-input {
+  font-variant-numeric: tabular-nums;
+}
+
+.discount-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 11px;
+  padding: 10px 11px;
+  background: #f9f8f4;
+  border: 1px solid #eee9df;
+  border-radius: 8px;
+}
+
+.discount-breakdown > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 10px;
+}
+
+.discount-breakdown span {
+  color: #82796c;
+}
+
+.discount-breakdown strong {
+  color: #43815d;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+@media (max-width: 380px) {
+  .discount-input-group {
+    grid-template-columns: 1fr;
+  }
+}
